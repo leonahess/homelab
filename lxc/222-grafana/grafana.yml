@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+
+  grafana:
+    image: grafana/grafana:8.0.6
+    container_name: grafana
+    volumes:
+      - /mnt/appdata/grafana:/var/lib/grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    user: "472"
