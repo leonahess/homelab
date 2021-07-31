@@ -1,0 +1,17 @@
+version: '3'
+
+# https://github.com/shenxn/protonmail-bridge-docker
+#
+# Setup run
+# docker run --rm -it -v /mnt/appdata/protonmail-bridge:/root shenxn/protonmail-bridge init
+
+services:
+  protonmail-bridge:
+    image: shenxn/protonmail-bridge:latest
+    restart: unless-stopped
+    container_name: ProtonMailBridge
+    volumes:
+      - /mnt/appdata/protonmail-bridge:/root
+    ports:
+      - "1025:25"
+      - "1143:143"
