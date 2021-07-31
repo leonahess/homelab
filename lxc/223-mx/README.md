@@ -4,22 +4,22 @@
 
 ### update OS
 
-'''
+```
 apt update && apt upgrade -y && apt autoremove -y
-'''
+```
 
 ### install tools
 
-'''
+```
 apt install curl git docker-compose
-'''
+```
 
 ### install docker
 
-'''
+```
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
-'''
+```
 
 
 ## Service Setup
@@ -29,30 +29,30 @@ The used docker images is here: https://github.com/shenxn/protonmail-bridge-dock
 
 ### clone homelab repo
 
-'''
+```
 git clone https://github.com/leonahess/homelab
-'''
+```
 
 ### create appdata directories
 
-'''
+```
 mkdir /mnt/appdata
 mkdir /mnt/appdata/protonmail-bridge
-'''
+```
 
 ### setup the bridge
 
 see CLI guide here: https://protonmail.com/support/knowledge-base/bridge-cli-guide/
 
-'''
+```
 docker run --rm -it -v /mnt/appdata/protonmail-bridge:/root shenxn/protonmail-bridge init
-'''
+```
 
 ### start service
 
-'''
+```
 docker-compose -f /root/homelab/lxc/223-mx/protonmail-bridge.yml up -d
-'''
+```
 
 ## Maintenance
 
