@@ -22,5 +22,5 @@
 # 
 # m h  dom mon dow   command
 MAILTO="insert your email here"
-0 3 * * 0 sh /root/crons/update-ubuntu.sh
-0 3 * * 1 sh /root/crons/update-protonmail-bridge.sh
+0 3 * * 0 sh /root/homelab/lxc/223-mx/crons/update-ubuntu.sh
+0 3 * * 1 sh /root/homelab/lxc/223-mx/crons/update-protonmail-bridge.sh
