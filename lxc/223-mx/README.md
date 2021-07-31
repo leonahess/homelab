@@ -1,4 +1,11 @@
+## Service config
 
+```
+SMTP Port: 1025
+IMAP Port: 1143
+       ip: 192.168.66.223
+   domain: mx.leona.pink
+```
 
 ## LXC Setup
 
