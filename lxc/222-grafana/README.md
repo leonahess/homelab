@@ -79,10 +79,10 @@ dns_cloudflare_email=insert_your_email_here
 dns_cloudflare_api_key=insert_your_global_api_key_here
 ```
 
-chown to 600
+chmod to 600
 
 ```
-chown 600 /root/.secrets/cloudflare.ini
+chmod 600 /root/.secrets/cloudflare.ini
 ```
 
 ### get certs
