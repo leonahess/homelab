@@ -23,3 +23,4 @@
 # m h  dom mon dow   command
 MAILTO="insert your email here"
 0 3 * * 0 sh /root/homelab/lxc/222-grafana/crons/update-ubuntu.sh
+0 1 1 * * sh /root/homelab/lxc/222-grafana/crons/certbot.sh

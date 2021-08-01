@@ -62,3 +62,41 @@ docker-compose -f /root/homelab/lxc/222-grafana/grafana.yml up -d
 
 You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file. Unfortunately Grafana doesn't have a general version tag like `8.0` to get all minor version updates to version 8.0, 
 so updates to the service need to be done manually.
+
+## SSL Certs
+
+### Install certbot and cloudflare plugin
+
+```
+apt install certbot python3-certbot-dns-cloudflare
+```
+
+### Create cloudflare.ini with cloudflare credentials
+
+cloudflare.ini
+```
+dns_cloudflare_email=insert_your_email_here
+dns_cloudflare_api_key=insert_your_global_api_key_here
+```
+
+### get certs
+
+```
+certbot certonly --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/cloudflare.ini -d grafana.leona.pink
+```
+
+### copy certs to docker bind mount and chown to grafana user
+
+```
+cp /etc/letsencrypt/live/grafana.leona.pink/fullchain.pem /mnt/appdata/grafana/fullchain.pem
+cp /etc/letsencrypt/live/grafana.leona.pink/privkey.pem /mnt/appdata/grafana/privkey.pem
+
+chown 472 /mnt/appdata/grafana/fullchain.pem
+chown 472 /mnt/appdata/grafana/privkey.pem
+```
+
+### add cronjob to crontab
+
+```
+0 1 1 * * sh /root/homelab/lxc/222-grafana/crons/certbot.sh
+```
