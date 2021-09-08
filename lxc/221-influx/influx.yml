@@ -1,0 +1,16 @@
+version: '3'
+services:
+
+  influxdb:
+    image: influxdb:2.0
+    container_name: influx
+    environment:
+      - INFLUXD_TLS_CERT=/etc/ssl/fullchain.pem
+      - INFLUXD_TLS_KEY=/etc/ssl/privkey.pem
+    volumes:
+      # Mount for influxdb data directory and configuration
+      - /mnt/appdata/influx:/var/lib/influxdb2:rw
+      - /mnt/appdata/influx-certs:/etc/ssl
+    ports:
+      - "8086:8086"
+    restart: unless-stopped
