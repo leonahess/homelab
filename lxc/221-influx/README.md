@@ -1,7 +1,7 @@
 ## Service config
 
 ```
-webPort:  443
+webPort:  8086
  dbPort:  8086
      ip:  192.168.66.221
  domain:  unifi.leona.pink
@@ -31,7 +31,7 @@ sudo sh get-docker.sh
 
 ## Service Setup
 
-The service is InfluxDB, a time series database
+The service is InfluxDB, a time series database.
 The used docker images is here: https://hub.docker.com/_/influxdb
 
 ### clone homelab repo
