@@ -6,8 +6,8 @@ COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/enviroplus.py ./
+COPY src/enviro_plus.py ./
 
 RUN ls -la .
 
-CMD ["python", "./enviroplus.py"]
+CMD ["python", "./enviro_plus.py"]

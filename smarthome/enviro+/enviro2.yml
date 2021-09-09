@@ -1,0 +1,16 @@
+version: '3'
+services:
+
+  enviroplus:
+    build: .
+    container_name: enviroplus
+    environment:
+      - "INFLUX_BUCKET=smarthome"
+      - "INFLUX_ORG=me"
+      - "INFLUX_TOKEN=add_token_here"
+      - "INFLUX_URL=https://influx.leona.pink:8086"
+      - "TAG_LOCATION=leona_backyard"
+      - "PM_SENSOR=False"
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
