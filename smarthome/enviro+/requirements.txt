@@ -2,5 +2,4 @@ influxdb-client
 enviroplus
 numpy
 smbus
-pil
 setuptools
