@@ -66,9 +66,10 @@ logging.info("Initializing BME280 sensor")
 bme280 = BME280()
 
 # PMS5003 particulate sensor
-logging.info("Initializing PMS5003 sensor")
 pm_sensor = os.getenv("PM_SENSOR", False)
+logging.info("Particle Sensor connected: %s" % pm_sensor)
 if pm_sensor:
+    logging.info("Initializing PMS5003 sensor")
     pms5003 = PMS5003()
     time.sleep(1.0)
 
