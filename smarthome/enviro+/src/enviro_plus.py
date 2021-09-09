@@ -2,10 +2,6 @@ import logging
 import os
 import socket
 from dotenv import Dotenv
-import sys
-import colorsys
-import ST7735
-
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -14,7 +10,6 @@ import time
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError, SerialTimeoutError
 from enviroplus import gas
-#import enviroplus
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -48,13 +43,17 @@ bucket = os.getenv("INFLUX_BUCKET", "smarthome")
 org = os.getenv("INFLUX_ORG", "me")
 token = os.getenv("INFLUX_TOKEN")
 url = os.getenv("INFLUX_URL", "https://influx.leona.pink:8086")
-print(url)
+
+logging.info("Connecting to influx: %s" % url)
+
 client = influxdb_client.InfluxDBClient(
     url=url,
     token=token,
     org=org
 )
 write_api = client.write_api(write_options=SYNCHRONOUS)
+
+logging.info("Connected to influx: %s" % url)
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -63,9 +62,11 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 ########################################################################################################################
 
 # BME280 temperature/pressure/humidity sensor
+logging.info("Initializing BME280 sensor")
 bme280 = BME280()
 
 # PMS5003 particulate sensor
+logging.info("Initializing PMS5003 sensor")
 pm_sensor = os.getenv("PM_SENSOR", False)
 if pm_sensor:
     pms5003 = PMS5003()
@@ -102,6 +103,8 @@ units = ["C",
          "ug/m3",
          "ug/m3",
          "ug/m3"]
+
+logging.info("Starting main loop")
 
 
 def write_to_influx(measurement, field, field_data):
