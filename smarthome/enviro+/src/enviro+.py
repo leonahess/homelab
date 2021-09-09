@@ -1,6 +1,10 @@
 import logging
 import os
 import socket
+from dotenv import Dotenv
+import sys
+import colorsys
+import ST7735
 
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -10,6 +14,7 @@ import time
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError, SerialTimeoutError
 from enviroplus import gas
+#import enviroplus
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -17,6 +22,8 @@ try:
 except ImportError:
     import ltr559
 
+dotenv = Dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+os.environ.update(dotenv)
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -41,7 +48,7 @@ bucket = os.getenv("INFLUX_BUCKET", "smarthome")
 org = os.getenv("INFLUX_ORG", "me")
 token = os.getenv("INFLUX_TOKEN")
 url = os.getenv("INFLUX_URL", "https://influx.leona.pink:8086")
-
+print(url)
 client = influxdb_client.InfluxDBClient(
     url=url,
     token=token,
@@ -107,29 +114,29 @@ while True:
 
     # Unit: °C
     temp = bme280.get_temperature()
-    write_to_influx("temperature", "temperature", temp)
+    write_to_influx("temperature", "temperature", float(temp))
     # Unit: %
     pressure = bme280.get_pressure()
-    write_to_influx("pressure", "pressure", pressure)
+    write_to_influx("pressure", "pressure", float(pressure))
     # Unit: hPa
     humidity = bme280.get_humidity()
-    write_to_influx("humidity", "humidity", humidity)
+    write_to_influx("humidity", "humidity", float(humidity))
 
     # Unit: Lux
     if proximity < 10:
         lux = ltr559.get_lux()
     else:
         lux = 1
-    write_to_influx("light", "light", lux)
+    write_to_influx("light", "light", float(lux))
 
     # Unit: kOhm
     gas_data = gas.read_all()
     oxidising = gas_data.oxidising / 1000
     reducing = gas_data.reducing / 1000
     nh3 = gas_data.nh3 / 1000
-    write_to_influx("gas", "oxidising", oxidising)
-    write_to_influx("gas", "reducing", reducing)
-    write_to_influx("gas", "nh3", nh3)
+    write_to_influx("gas", "oxidising", int(oxidising))
+    write_to_influx("gas", "reducing", int(reducing))
+    write_to_influx("gas", "nh3", int(nh3))
 
     # Unit: ug/m³
     if pm_sensor:
