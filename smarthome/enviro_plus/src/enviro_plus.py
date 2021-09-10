@@ -66,9 +66,9 @@ logging.info("Initializing BME280 sensor")
 bme280 = BME280()
 
 # PMS5003 particulate sensor
-pm_sensor = os.getenv("PM_SENSOR", False)
+pm_sensor = os.getenv("PM_SENSOR", "False")
 logging.info("Particle Sensor connected: %s" % pm_sensor)
-if pm_sensor == True:
+if pm_sensor == "True":
     logging.info("Initializing PMS5003 sensor")
     pms5003 = PMS5003()
     time.sleep(1.0)
@@ -143,7 +143,7 @@ while True:
     write_to_influx("gas", "nh3", int(nh3))
 
     # Unit: ug/m3
-    if pm_sensor == True:
+    if pm_sensor == "True":
         pms_data = None
         try:
             pms_data = pms5003.read()
