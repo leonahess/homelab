@@ -17,10 +17,10 @@ os.environ.update(dotenv)
 
 host = socket.gethostname()
 
-sgp30_sensor = os.getenv("SGP30_SENSOR", 0)
-VEML6075_sensor = os.getenv("VEML6075_SENSOR", 0)
-bme688_sensor_primary = os.getenv("BME688_SENSOR_PRIMARY", 0)
-bme688_sensor_secondary = os.getenv("BME688_SENSOR_SECONDARY", 0)
+sgp30_sensor = os.getenv("SGP30_SENSOR", "0")
+VEML6075_sensor = os.getenv("VEML6075_SENSOR", "0")
+bme688_sensor_primary = os.getenv("BME688_SENSOR_PRIMARY", "0")
+bme688_sensor_secondary = os.getenv("BME688_SENSOR_SECONDARY", "0")
 
 sgp30_sensor_location = os.getenv("SGP30_SENSOR_TAG_LOCATION", "default")
 VEML6075_sensor_location = os.getenv("VEML6075_SENSOR_TAG_LOCATION", "default")
@@ -67,7 +67,7 @@ logging.info("Connected to influx: %s" % url)
 ########################################################################################################################
 
 logging.info("Primary BME688 connected: %s" % bme688_sensor_primary)
-if bme688_sensor_primary == 1:
+if bme688_sensor_primary == "1":
     logging.info("Initializing first BME688 sensor")
     sensor1 = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
 
@@ -78,7 +78,7 @@ if bme688_sensor_primary == 1:
     sensor1.set_filter(bme680.FILTER_SIZE_3)
 
 logging.info("Secondary BME688 connected: %s" % bme688_sensor_secondary)
-if bme688_sensor_secondary == 1:
+if bme688_sensor_secondary == "1":
     logging.info("Initializing second BME688 sensor")
     sensor2 = bme680.BME680(bme680.I2C_ADDR_SECONDARY)
 
@@ -89,7 +89,7 @@ if bme688_sensor_secondary == 1:
     sensor2.set_filter(bme680.FILTER_SIZE_3)
 
 logging.info("SGP30 connected: %s" % sgp30_sensor)
-if sgp30_sensor == 1:
+if sgp30_sensor == "1":
     logging.info("Initializing SGP30 sensor")
     sgp30 = SGP30()
 
@@ -110,19 +110,19 @@ def write_to_influx(measurement, field, field_data, location_data):
 
 logging.info("Starting main loop")
 while True:
-    if bme688_sensor_primary == 1:
+    if bme688_sensor_primary == "1":
         if sensor1.get_sensor_data():
             write_to_influx("temperature", "temperature", float(sensor1.data.temperature), bme688_sensor_primary_location)
             write_to_influx("pressure", "pressure", float(sensor1.data.pressure), bme688_sensor_primary_location)
             write_to_influx("humidity", "humidity", float(sensor1.data.humidity), bme688_sensor_primary_location)
 
-    if bme688_sensor_secondary == 1:
+    if bme688_sensor_secondary == "1":
         if sensor2.get_sensor_data():
             write_to_influx("temperature", "temperature", float(sensor2.data.temperature), bme688_sensor_secondary_location)
             write_to_influx("pressure", "pressure", float(sensor2.data.pressure), bme688_sensor_secondary_location)
             write_to_influx("humidity", "humidity", float(sensor2.data.humidity), bme688_sensor_secondary_location)
 
-    if sgp30_sensor == 1:
+    if sgp30_sensor == "1":
         eco2, tvoc = sgp30.get_air_quality()
         write_to_influx("gas", "eco2", int(eco2), sgp30_sensor_location)
         write_to_influx("gas", "tvoc", int(tvoc), sgp30_sensor_location)
