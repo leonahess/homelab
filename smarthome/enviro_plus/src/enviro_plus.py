@@ -68,7 +68,7 @@ bme280 = BME280()
 # PMS5003 particulate sensor
 pm_sensor = os.getenv("PM_SENSOR", False)
 logging.info("Particle Sensor connected: %s" % pm_sensor)
-if pm_sensor:
+if pm_sensor == True:
     logging.info("Initializing PMS5003 sensor")
     pms5003 = PMS5003()
     time.sleep(1.0)
@@ -116,7 +116,7 @@ def write_to_influx(measurement, field, field_data):
 while True:
     proximity = ltr559.get_proximity()
 
-    # Unit: °C
+    # Unit: C
     temp = bme280.get_temperature()
     write_to_influx("temperature", "temperature", float(temp))
     # Unit: %
@@ -142,8 +142,8 @@ while True:
     write_to_influx("gas", "reducing", int(reducing))
     write_to_influx("gas", "nh3", int(nh3))
 
-    # Unit: ug/m³
-    if pm_sensor:
+    # Unit: ug/m3
+    if pm_sensor == True:
         pms_data = None
         try:
             pms_data = pms5003.read()

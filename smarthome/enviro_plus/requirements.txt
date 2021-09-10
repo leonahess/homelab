@@ -1,6 +1,5 @@
 influxdb-client
 enviroplus
-numpy
 smbus
 RPi.GPIO
 setuptools
