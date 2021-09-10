@@ -123,6 +123,6 @@ while True:
             write_to_influx("humidity", "humidity", float(sensor2.data.humidity), bme688_sensor_secondary_location)
 
     if sgp30_sensor == "1":
-        eco2, tvoc = sgp30.get_air_quality()
-        write_to_influx("gas", "eco2", int(eco2), sgp30_sensor_location)
-        write_to_influx("gas", "tvoc", int(tvoc), sgp30_sensor_location)
+        res = sgp30.get_air_quality()
+        write_to_influx("gas", "eco2", int(res.equivalent_co2), sgp30_sensor_location)
+        write_to_influx("gas", "tvoc", int(res.total_voc), sgp30_sensor_location)
