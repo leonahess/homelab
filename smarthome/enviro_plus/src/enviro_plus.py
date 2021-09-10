@@ -150,12 +150,10 @@ while True:
         except (SerialTimeoutError, pmsReadTimeoutError):
             logging.warning("Failed to read PMS5003")
         else:
-            pm0_5 = float(pms_data.pm_ug_per_m3(0.5))
             pm1 = float(pms_data.pm_ug_per_m3(1.0))
             pm2_5 = float(pms_data.pm_ug_per_m3(2.5))
             pm5 = float(pms_data.pm_ug_per_m3(5))
             pm10 = float(pms_data.pm_ug_per_m3(10))
-            write_to_influx("particulate_matter", "pm0_5", pm0_5)
             write_to_influx("particulate_matter", "pm1", pm1)
             write_to_influx("particulate_matter", "pm2_5", pm2_5)
             write_to_influx("particulate_matter", "pm5", pm5)
