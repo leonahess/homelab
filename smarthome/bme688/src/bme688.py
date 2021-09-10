@@ -80,21 +80,22 @@ sensor2.set_filter(bme680.FILTER_SIZE_3)
 host = socket.gethostname()
 location = os.getenv("TAG_LOCATION", "default")
 
+logging.info("Starting main loop")
 
-def write_to_influx(measurement, field, field_data):
-    point = influxdb_client.Point(measurement).tag("host", host).tag("location", location).field(field, field_data)
+def write_to_influx(measurement, field, field_data, sensor):
+    point = influxdb_client.Point(measurement).tag("host", host).tag("location", location).tag("sensor", sensor).field(field, field_data)
     write_api.write(bucket=bucket, org=org, record=point)
 
 
 while True:
     if sensor1.get_sensor_data():
-        write_to_influx("temperature", "temperature", float(sensor1.data.temperature))
-        write_to_influx("pressure", "pressure", float(sensor1.data.pressure))
-        write_to_influx("humidity", "humidity", float(sensor1.data.humidity))
+        write_to_influx("temperature", "temperature", float(sensor1.data.temperature),1)
+        write_to_influx("pressure", "pressure", float(sensor1.data.pressure), 1)
+        write_to_influx("humidity", "humidity", float(sensor1.data.humidity), 1)
 
     if sensor2.get_sensor_data():
-        write_to_influx("temperature", "temperature", float(sensor2.data.temperature))
-        write_to_influx("pressure", "pressure", float(sensor2.data.pressure))
-        write_to_influx("humidity", "humidity", float(sensor2.data.humidity))
+        write_to_influx("temperature", "temperature", float(sensor2.data.temperature), 2)
+        write_to_influx("pressure", "pressure", float(sensor2.data.pressure), 2)
+        write_to_influx("humidity", "humidity", float(sensor2.data.humidity), 2)
 
 
