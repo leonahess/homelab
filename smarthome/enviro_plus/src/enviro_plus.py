@@ -152,9 +152,23 @@ while True:
         else:
             pm1 = float(pms_data.pm_ug_per_m3(1.0))
             pm2_5 = float(pms_data.pm_ug_per_m3(2.5))
-            pm5 = float(pms_data.pm_ug_per_m3(5))
             pm10 = float(pms_data.pm_ug_per_m3(10))
             write_to_influx("particulate_matter", "pm1", pm1)
             write_to_influx("particulate_matter", "pm2_5", pm2_5)
-            write_to_influx("particulate_matter", "pm5", pm5)
             write_to_influx("particulate_matter", "pm10", pm10)
+
+            l003 = float(pms_data.pm_ug_per_m3(0.3))
+            l005 = float(pms_data.pm_ug_per_m3(0.5))
+            l010 = float(pms_data.pm_ug_per_m3(1.0))
+            l025 = float(pms_data.pm_ug_per_m3(2.5))
+            l050 = float(pms_data.pm_ug_per_m3(5))
+            l100 = float(pms_data.pm_ug_per_m3(10))
+
+            write_to_influx("particulate_matter", "l003", l003)
+            write_to_influx("particulate_matter", "l005", l005)
+            write_to_influx("particulate_matter", "l010", l010)
+            write_to_influx("particulate_matter", "l025", l025)
+            write_to_influx("particulate_matter", "l050", l050)
+            write_to_influx("particulate_matter", "l100", l100)
+
+
