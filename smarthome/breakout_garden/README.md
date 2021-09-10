@@ -1,7 +1,8 @@
-# Script to read two BME688 sensors and write to InfluxDB
+# Script to read two various sensors from Pimoroni's breakout garden kit sensors and write to InfluxDB
 
 
 - https://github.com/pimoroni/bme680-python
+- https://github.com/pimoroni/sgp30-python
 - https://docs.influxdata.com/influxdb/v2.0/api-guide/client-libraries/python/
 
 ## Setup the Pi
