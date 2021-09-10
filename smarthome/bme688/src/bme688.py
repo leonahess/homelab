@@ -105,7 +105,7 @@ while curr_time - start_time < burn_in_time:
     if sensor2.get_sensor_data() and sensor2.data.heat_stable:
         gas = sensor2.data.gas_resistance
         burn_in_data.append(gas)
-        logging.info("'Gas: {0} Ohms'.format(gas)")
+        logging.info("Gas: {0} Ohms".format(gas))
         time.sleep(1)
 
 gas_baseline = sum(burn_in_data[-50:]) / 50.0
