@@ -47,6 +47,6 @@ Move service to /etc/systemd/system and start it
 ```
 sudo cp /home/pi/homelab/smarthome/breakout_garden/breakout.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable enviro.service
-sudo systemctl start envrio.service
+sudo systemctl enable breakout.service
+sudo systemctl start breakout.service
 ```
