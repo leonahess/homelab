@@ -1,4 +1,4 @@
 bme680
 influxdb-client
 dotenv
-sgp30
+pimoroni-sgp30
