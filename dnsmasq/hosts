@@ -20,6 +20,8 @@ ff02::2		ip6-allrouters
 
 192.168.66.210  nextcloud
 192.168.66.211  plex
+192.168.66.212  photonix
+192.168.66.213  photoprism
 
 192.168.66.220  postgres
 192.168.66.221  influx
