@@ -21,6 +21,8 @@ git clone https://github.com/leonahess/homelab.git
 
 You might have to do some tricks to get the Sensor Bridge to show up as a serial device (`ttyUSB0`). See here for info: https://unix.stackexchange.com/questions/67936/attaching-usb-serial-device-with-custom-pid-to-ttyusb0-on-embedded/165845
 
+Use `dmesg | grep usb` to find the Vendor id and Product id of the Sensor Bridge.
+
 1. Add the following single line to `/etc/udev/rules.d/99-ftdi.rules`
 ```
 ACTION=="add", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="7168", RUN+="/sbin/modprobe ftdi_sio" RUN+="/bin/sh -c 'echo 0403 7168 > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"
