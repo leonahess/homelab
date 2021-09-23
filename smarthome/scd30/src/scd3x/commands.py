@@ -17,7 +17,18 @@ def interpret_as_float(integer: int):
     return struct.unpack('!f', struct.pack('!I', integer))[0]
 
 
-def _crc8(self, word: int):
+def _check_word( word: int, name: str = "value"):
+    """Checks that a word is a valid two-byte value and throws otherwise.
+    Parameters:
+        word: integer value to check.
+        name (optional): name of the variable to include in the error.
+    """
+    if not 0 <= word <= 0xFFFF:
+        raise ValueError(
+            f"{name} outside valid two-byte word range: {word}")
+
+
+def _crc8(word: int):
     """Computes the CRC-8 checksum as per the SCD30 interface description.
     Parameters:
         word: two-byte integer word value to compute the checksum over.
@@ -28,7 +39,7 @@ def _crc8(self, word: int):
     Algorithm adapted from:
     https://en.wikipedia.org/wiki/Computation_of_cyclic_redundancy_checks
     """
-    self._check_word(word, "word")
+    _check_word(word, "word")
     polynomial = 0x31
     rem = 0xFF
     word_bytes = word.to_bytes(2, "big")
@@ -170,23 +181,19 @@ class Scd3XI2CCmdReadMeasurement(Scd3xI2cCmdBase):
             If a received CRC was wrong.
         """
         # check and remove CRCs
-        logging.info("data: {}".format(data))
+        logging.debug("data: {}".format(data))
         checked_data = Scd3xI2cCmdBase.interpret_response(self, data)
-        logging.info("checked data: {}".format(checked_data))
-        # convert raw received data into proper data types
-        #co2 = int(unpack(">H", checked_data[0:2])[0])  # uint16
-        #temperature = int(unpack(">H", checked_data[2:4])[0])  # uint16
-        #humidity = int(unpack(">H", checked_data[4:6])[0])  # uint16
+        logging.debug("checked data: {}".format(checked_data))
 
-        final_data= [int.from_bytes(checked_data[:2], "big"), int.from_bytes(checked_data[2:4], "big"), int.from_bytes(checked_data[4:6], "big"), int.from_bytes(checked_data[6:8], "big"), int.from_bytes(checked_data[8:10], "big"), int.from_bytes(checked_data[10:], "big")]
+        # convert raw received data into proper data types
+        final_data = [int.from_bytes(checked_data[:2], "big"), int.from_bytes(checked_data[2:4], "big"), int.from_bytes(checked_data[4:6], "big"), int.from_bytes(checked_data[6:8], "big"), int.from_bytes(checked_data[8:10], "big"), int.from_bytes(checked_data[10:], "big")]
 
         co2  = interpret_as_float((final_data[0] << 16) | final_data[1])
         temp = interpret_as_float((final_data[2] << 16) | final_data[3])
         hum  = interpret_as_float((final_data[4] << 16) | final_data[5])
         logging.info("co2: {}, temp: {}, hum:{}".format(co2, temp, hum))
 
-        #return Scd3xCarbonDioxide(co2), Scd3xTemperature(temperature), Scd3xHumidity(humidity)
-        return (co2, temp, hum)
+        return co2, temp, hum
 
 
 class Scd3XI2CCmdStopPeriodicMeasurement(Scd3xI2cCmdBase):
