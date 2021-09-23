@@ -68,7 +68,7 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
     logging.info("Getting temp offset...")
     scd30.get_temperature_offset()
     logging.info("Setting temp offset interval to 2 C...")
-    scd30.set_temperature_offset(2.0)
+    scd30.set_temperature_offset(2)
     logging.info("Enabling automatic self-calibration...")
     scd30.set_automatic_self_calibration(True)
     logging.info("Starting periodic measurement...")
