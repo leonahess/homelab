@@ -137,7 +137,7 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
     #scd30.set_measurement_interval(measurement_interval)
 
     logging.info("Getting temp offset: {} celsius".format(current_temp_offset))
-    if temp_offset != current_temp_offset:
+    if temp_offset != (current_temp_offset * 100):
         logging.info("Setting temp offset interval to {} celsius...".format(temp_offset / 100))
         scd30.set_temperature_offset(temp_offset)
         logging.info("Getting temp offset: {}".format(scd30.get_temperature_offset()))
