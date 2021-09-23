@@ -1,6 +1,7 @@
 influxdb-client
 enviroplus
-smbus
+smbus2
 RPi.GPIO
 setuptools
+dotenv
 

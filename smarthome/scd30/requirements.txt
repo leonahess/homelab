@@ -1,3 +1,5 @@
 sensirion-shdlc-sensorbridge
 sensirion_i2c_driver
 influxdb-client
+smbus2
+dotenv

@@ -1,10 +1,22 @@
-import time, logging
+import time
 from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
 from sensirion_shdlc_sensorbridge import SensorBridgePort, \
     SensorBridgeShdlcDevice, SensorBridgeI2cProxy
 from sensirion_i2c_driver import I2cConnection
 
 from scd3x.device import Scd3xI2cDevice
+
+from dotenv import Dotenv
+import influxdb_client
+from influxdb_client.client.write_api import SYNCHRONOUS
+import os
+import socket
+import logging
+
+
+def write_to_influx(measurement, field, field_data):
+    point = influxdb_client.Point(measurement).tag("host", host).tag("location", location).field(field, field_data)
+    write_api.write(bucket=bucket, org=org, record=point)
 
 
 def continuous_reading(scd30: Scd3xI2cDevice):
@@ -15,21 +27,79 @@ def continuous_reading(scd30: Scd3xI2cDevice):
             measurement = scd30.read_measurement()
             logging.debug("Read from sensor.")
             logging.debug("Measurement: {}".format(measurement))
-            #logging.info("Co2: {}, temp: {}, rh: {}".format(measurement[0].co2, measurement[1].degrees_celsius, measurement[2].percent_rh))
             if measurement is not None:
                 co2, temp, rh = measurement
-                print(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
+                logging.debug(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
+                write_to_influx("humidity", "humidity", float(co2))
+                write_to_influx("humidity", "humidity", float(temp))
+                write_to_influx("humidity", "humidity", float(rh))
             time.sleep(measurement_interval)
         else:
             time.sleep(0.2)
 
+
+dotenv = Dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+os.environ.update(dotenv)
+
+########################################################################################################################
+#                                                                                                                      #
+# Logging configuration                                                                                                #
+#                                                                                                                      #
+########################################################################################################################
+
+
+logging.basicConfig(
+    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+########################################################################################################################
+#                                                                                                                      #
+# Influx configuration                                                                                                 #
+#                                                                                                                      #
+########################################################################################################################
+
+
+bucket = os.getenv("INFLUX_BUCKET", "smarthome")
+org = os.getenv("INFLUX_ORG", "me")
+token = os.getenv("INFLUX_TOKEN")
+url = os.getenv("INFLUX_URL", "https://influx.leona.pink:8086")
+
+logging.info("Connecting to influx: %s" % url)
+
+client = influxdb_client.InfluxDBClient(
+    url=url,
+    token=token,
+    org=org
+)
+write_api = client.write_api(write_options=SYNCHRONOUS)
+
+logging.info("Connected to influx: %s" % url)
+
+########################################################################################################################
+#                                                                                                                      #
+# Stuff                                                                                            #
+#                                                                                                                      #
+########################################################################################################################
+
+host = socket.gethostname()
+location = os.getenv("TAG_LOCATION", "default")
+
+logging.info("Starting main loop")
+
+
+########################################################################################################################
+#                                                                                                                      #
+# Initialize Sensors                                                                                                   #
+#                                                                                                                      #
+########################################################################################################################
 
 # Connect to the SensorBridge with default settings:
 #  - baudrate:      460800
 #  - slave address: 0
 with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
     bridge = SensorBridgeShdlcDevice(ShdlcConnection(port), slave_address=0)
-    print("SensorBridge SN: {}".format(bridge.get_serial_number()))
+    logging.info("SensorBridge SN: {}".format(bridge.get_serial_number()))
 
     # Configure SensorBridge port 1 for SCD4x
     bridge.set_i2c_frequency(SensorBridgePort.ONE, frequency=100e3)
@@ -39,8 +109,6 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
     # Create SCD41 device
     i2c_transceiver = SensorBridgeI2cProxy(bridge, port=SensorBridgePort.ONE)
     scd30 = Scd3xI2cDevice(I2cConnection(i2c_transceiver))
-
-    logging.basicConfig(level=logging.INFO)
 
     retries = 30
     logging.info("Probing sensor...")
