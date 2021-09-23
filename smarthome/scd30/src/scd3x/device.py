@@ -6,13 +6,11 @@ from __future__ import absolute_import, division, print_function
 from sensirion_i2c_driver import I2cDevice
 from sensirion_i2c_driver.errors import I2cNackError
 
-from .commands import Scd3XI2CCmdGetSerialNumber, Scd3XI2CCmdStartPeriodicMeasurement, \
-    Scd3XI2CCmdStartLowPowerPeriodicMeasurement, Scd3XI2CCmdReadMeasurement, Scd3XI2CCmdStopPeriodicMeasurement, \
-    Scd3XI2CCmdGetTemperatureOffset, Scd3XI2CCmdSetTemperatureOffset, Scd3XI2CCmdGetSensorAltitude, \
-    Scd3XI2CCmdSetSensorAltitude, Scd3XI2CCmdSetAmbientPressure, Scd3XI2CCmdPerformForcedRecalibration, \
-    Scd3XI2CCmdGetAutomaticSelfCalibration, Scd3XI2CCmdSetAutomaticSelfCalibration, Scd3XI2CCmdGetDataReadyStatus, \
-    Scd3XI2CCmdPersistSettings, Scd3XI2CCmdPerformSelfTest, Scd3XI2CCmdPerformFactoryReset, Scd3XI2CCmdReinit, \
-    Scd3XI2CCmdMeasureSingleShot, Scd3XI2CCmdMeasureSingleShotRhtOnly, Scd3XI2CCmdPowerDown, Scd3XI2CCmdWakeUp
+from .commands import Scd3XI2CCmdStartPeriodicMeasurement, \
+    Scd3XI2CCmdReadMeasurement, Scd3XI2CCmdStopPeriodicMeasurement, \
+    Scd3XI2CCmdSetTemperatureOffset, \
+    Scd3XI2CCmdSetAutomaticSelfCalibration, Scd3XI2CCmdGetDataReadyStatus, \
+    Scd3XI2CCmdReinit
 from .data_types import Scd3xPowerMode
 
 
