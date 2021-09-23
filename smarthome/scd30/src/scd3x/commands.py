@@ -9,7 +9,6 @@ from struct import pack, unpack
 
 from sensirion_i2c_driver import SensirionI2cCommand, CrcCalculator
 
-from data_types import Scd3xTemperatureOffsetDegC
 import logging
 import struct
 
