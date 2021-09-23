@@ -233,7 +233,7 @@ class Scd3xI2cCmdGetTemperatureOffset(Scd3xI2cCmdBase):
             tx_data=None,
             rx_length=3,
             read_delay=0.001,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.0,
         )
 
