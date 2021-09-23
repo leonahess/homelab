@@ -17,44 +17,6 @@ def interpret_as_float(integer: int):
     return struct.unpack('!f', struct.pack('!I', integer))[0]
 
 
-def _check_word( word: int, name: str = "value"):
-    """Checks that a word is a valid two-byte value and throws otherwise.
-    Parameters:
-        word: integer value to check.
-        name (optional): name of the variable to include in the error.
-    """
-    if not 0 <= word <= 0xFFFF:
-        raise ValueError(
-            f"{name} outside valid two-byte word range: {word}")
-
-
-def _crc8(word: int):
-    """Computes the CRC-8 checksum as per the SCD30 interface description.
-    Parameters:
-        word: two-byte integer word value to compute the checksum over.
-    Returns:
-        single-byte integer CRC-8 checksum.
-    Polynomial: x^8 + x^5 + x^4 + 1 (0x31, MSB)
-    Initialization: 0xFF
-    Algorithm adapted from:
-    https://en.wikipedia.org/wiki/Computation_of_cyclic_redundancy_checks
-    """
-    _check_word(word, "word")
-    polynomial = 0x31
-    rem = 0xFF
-    word_bytes = word.to_bytes(2, "big")
-    for byte in word_bytes:
-        rem ^= byte
-        for _ in range(8):
-            if rem & 0x80:
-                rem = (rem << 1) ^ polynomial
-            else:
-                rem = rem << 1
-            rem &= 0xFF
-
-    return rem
-
-
 class Scd3xI2cCmdBase(SensirionI2cCommand):
     """
     SCD4x I²C base command.
@@ -191,7 +153,7 @@ class Scd3XI2CCmdReadMeasurement(Scd3xI2cCmdBase):
         co2  = interpret_as_float((final_data[0] << 16) | final_data[1])
         temp = interpret_as_float((final_data[2] << 16) | final_data[3])
         hum  = interpret_as_float((final_data[4] << 16) | final_data[5])
-        logging.info("co2: {}, temp: {}, hum:{}".format(co2, temp, hum))
+        logging.debug("co2: {}, temp: {}, hum:{}".format(co2, temp, hum))
 
         return co2, temp, hum
 
@@ -242,8 +204,6 @@ class Scd3XI2CCmdSetTemperatureOffset(Scd3xI2cCmdBase):
         :param int t_offset:
             Temperature offset in degree celsius
         """
-
-        #raw_data = [t_offset.to_bytes(2, "big"), _crc8(t_offset)]
 
         super(Scd3XI2CCmdSetTemperatureOffset, self).__init__(
             command=0x5403,
