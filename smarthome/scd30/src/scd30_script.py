@@ -62,7 +62,7 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
 
 
     # 2 seconds is the minimum supported interval.
-    temp_offset = 2
+    temp_offset = 2 * 100
     current_temp_offset = scd30.get_temperature_offset()
     measurement_interval = 2
     #logging.info("Setting measurement interval to 2s...")
@@ -70,10 +70,9 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
 
     logging.info("Getting temp offset: {} celsius".format(current_temp_offset))
     if temp_offset != current_temp_offset:
-        logging.info("Setting temp offset interval to {} celsius...".format(temp_offset))
-        scd30.set_temperature_offset(2)
+        logging.info("Setting temp offset interval to {} celsius...".format(temp_offset / 100))
+        scd30.set_temperature_offset(temp_offset)
         logging.info("Getting temp offset: {}".format(scd30.get_temperature_offset()))
-    logging.info("Getting temp offset: {}".format(scd30.get_temperature_offset()))
     logging.info("Enabling automatic self-calibration...")
     scd30.set_automatic_self_calibration(True)
     logging.info("Starting periodic measurement...")
