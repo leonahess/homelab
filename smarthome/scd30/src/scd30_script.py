@@ -10,8 +10,13 @@ from scd3x.device import Scd3xI2cDevice
 
 def continuous_reading(scd30: Scd3xI2cDevice):
     while True:
+        logging.debug("Data ready: {}".format(scd30.get_data_ready_status()))
         if scd30.get_data_ready_status():
+            logging.debug("Reading from sensor.")
             measurement = scd30.read_measurement()
+            logging.debug("Read from sensor.")
+            logging.debug("Measurement: {}".format(measurement))
+            #logging.info("Co2: {}, temp: {}, rh: {}".format(measurement[0].co2, measurement[1].degrees_celsius, measurement[2].percent_rh))
             if measurement is not None:
                 co2, temp, rh = measurement
                 print(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
@@ -29,7 +34,7 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
 
     # Configure SensorBridge port 1 for SCD4x
     bridge.set_i2c_frequency(SensorBridgePort.ONE, frequency=100e3)
-    bridge.set_supply_voltage(SensorBridgePort.ONE, voltage=3.3)
+    bridge.set_supply_voltage(SensorBridgePort.ONE, voltage=3.6)
     bridge.switch_supply_on(SensorBridgePort.ONE)
 
     # Create SCD41 device
@@ -37,7 +42,7 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
     #scd30 = SCD30Test(I2cConnection(i2c_transceiver))
     scd30 = Scd3xI2cDevice(I2cConnection(i2c_transceiver))
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     retries = 30
     logging.info("Probing sensor...")

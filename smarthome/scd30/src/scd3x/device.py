@@ -19,7 +19,7 @@ class Scd3xI2cDevice(I2cDevice):
     SCD4x I²C device class to allow executing I²C commands.
     """
 
-    def __init__(self, connection, slave_address=0x62):
+    def __init__(self, connection, slave_address=0x61):
         """
         Constructs a new SCD4X I²C device.
 

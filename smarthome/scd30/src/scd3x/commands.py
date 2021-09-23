@@ -9,9 +9,15 @@ from struct import pack, unpack
 
 from sensirion_i2c_driver import SensirionI2cCommand, CrcCalculator
 
-from response_types import Scd3xHumidity, Scd3xCarbonDioxide, Scd3xTemperature
-from data_types import Scd3xTemperatureOffsetDegC
-from response_types import Scd3xTemperatureOffset
+from scd3x.response_types import Scd3xHumidity, Scd3xCarbonDioxide, Scd3xTemperature
+from scd3x.data_types import Scd3xTemperatureOffsetDegC
+from scd3x.response_types import Scd3xTemperatureOffset
+import logging
+import struct
+
+
+def interpret_as_float(integer: int):
+  return struct.unpack('!f', struct.pack('!I', integer))[0]
 
 
 class Scd3xI2cCmdBase(SensirionI2cCommand):
@@ -84,10 +90,10 @@ class Scd3XI2CCmdStartPeriodicMeasurement(Scd3xI2cCmdBase):
         """
         super(Scd3XI2CCmdStartPeriodicMeasurement, self).__init__(
             command=0x0010,
-            tx_data=0x00,
+            tx_data=b"".join([pack(">H", 0)]),
             rx_length=None,
             read_delay=0.0,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.001,
         )
 
@@ -113,11 +119,11 @@ class Scd3XI2CCmdReadMeasurement(Scd3xI2cCmdBase):
         Constructor.
         """
         super(Scd3XI2CCmdReadMeasurement, self).__init__(
-            command=0xEC05,
+            command=0x0300,
             tx_data=None,
-            rx_length=9,
+            rx_length=18,
             read_delay=0.001,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.0,
         )
 
@@ -140,13 +146,23 @@ class Scd3XI2CCmdReadMeasurement(Scd3xI2cCmdBase):
             If a received CRC was wrong.
         """
         # check and remove CRCs
+        logging.info("data: {}".format(data))
         checked_data = Scd3xI2cCmdBase.interpret_response(self, data)
-
+        logging.info("checked data: {}".format(checked_data))
         # convert raw received data into proper data types
-        co2 = int(unpack(">H", checked_data[0:2])[0])  # uint16
-        temperature = int(unpack(">H", checked_data[2:4])[0])  # uint16
-        humidity = int(unpack(">H", checked_data[4:6])[0])  # uint16
-        return Scd3xCarbonDioxide(co2), Scd3xTemperature(temperature), Scd3xHumidity(humidity)
+        #co2 = int(unpack(">H", checked_data[0:2])[0])  # uint16
+        #temperature = int(unpack(">H", checked_data[2:4])[0])  # uint16
+        #humidity = int(unpack(">H", checked_data[4:6])[0])  # uint16
+
+        final_data= [int.from_bytes(checked_data[:2], "big"), int.from_bytes(checked_data[2:4], "big"), int.from_bytes(checked_data[4:6], "big"), int.from_bytes(checked_data[6:8], "big"), int.from_bytes(checked_data[8:10], "big"), int.from_bytes(checked_data[10:], "big")]
+
+        co2  = interpret_as_float((final_data[0] << 16) | final_data[1])
+        temp = interpret_as_float((final_data[2] << 16) | final_data[3])
+        hum  = interpret_as_float((final_data[4] << 16) | final_data[5])
+        logging.info("co2: {}, temp: {}, hum:{}".format(co2, temp, hum))
+
+        #return Scd3xCarbonDioxide(co2), Scd3xTemperature(temperature), Scd3xHumidity(humidity)
+        return (co2, temp, hum)
 
 
 class Scd3XI2CCmdStopPeriodicMeasurement(Scd3xI2cCmdBase):
@@ -168,7 +184,7 @@ class Scd3XI2CCmdStopPeriodicMeasurement(Scd3xI2cCmdBase):
             tx_data=None,
             rx_length=None,
             read_delay=0.0,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.5,
         )
 
@@ -200,7 +216,7 @@ class Scd3XI2CCmdSetTemperatureOffset(Scd3xI2cCmdBase):
             tx_data=b"".join([pack(">H", Scd3xTemperatureOffsetDegC(t_offset).ticks)]),
             rx_length=None,
             read_delay=0.0,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.001,
         )
 
@@ -224,7 +240,7 @@ class Scd3XI2CCmdSetAutomaticSelfCalibration(Scd3xI2cCmdBase):
             tx_data=b"".join([pack(">H", asc_enabled)]),
             rx_length=None,
             read_delay=0.0,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.001,
         )
 
@@ -245,7 +261,7 @@ class Scd3XI2CCmdGetDataReadyStatus(Scd3xI2cCmdBase):
             tx_data=None,
             rx_length=3,
             read_delay=0.001,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.0,
         )
 
@@ -290,6 +306,6 @@ class Scd3XI2CCmdReinit(Scd3xI2cCmdBase):
             tx_data=None,
             rx_length=None,
             read_delay=0.0,
-            timeout=0,
+            timeout=0.05,
             post_processing_time=0.02,
         )
