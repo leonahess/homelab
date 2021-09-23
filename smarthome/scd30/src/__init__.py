@@ -15,7 +15,8 @@ class SCD30Test:
     def __init__(self, i2c_connection):
         self._i2c_addr = 0x61
         #self._i2c = smbus2.SMBus(1)
-        self._i2c = i2c_connection
+        self._i2c = smbus2.SMBus(i2c_connection)
+        #self._i2c = i2c_connection
 
     def _pretty_hex(self, data):
         """Formats an I2C message in an easily readable format.
