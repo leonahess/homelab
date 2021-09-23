@@ -1,0 +1,15 @@
+[Unit]
+Description=Reading the SCD30 CO2 sensor
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+WorkingDirectory=/home/pi
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/homelab/smarthome/scd30/src/scd30_script.py
+
+[Install]
+WantedBy=multi-user.target
+
