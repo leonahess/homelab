@@ -243,11 +243,11 @@ class Scd3XI2CCmdSetTemperatureOffset(Scd3xI2cCmdBase):
             Temperature offset in degree celsius
         """
 
-        raw_data = [t_offset.to_bytes(2, "big"), _crc8(t_offset)]
+        #raw_data = [t_offset.to_bytes(2, "big"), _crc8(t_offset)]
 
         super(Scd3XI2CCmdSetTemperatureOffset, self).__init__(
             command=0x5403,
-            tx_data=raw_data,
+            tx_data=b"".join([pack(">H", t_offset)]),
             rx_length=None,
             read_delay=0.0,
             timeout=0.05,
