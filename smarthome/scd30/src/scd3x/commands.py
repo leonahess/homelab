@@ -9,15 +9,40 @@ from struct import pack, unpack
 
 from sensirion_i2c_driver import SensirionI2cCommand, CrcCalculator
 
-from scd3x.response_types import Scd3xHumidity, Scd3xCarbonDioxide, Scd3xTemperature
-from scd3x.data_types import Scd3xTemperatureOffsetDegC
-from scd3x.response_types import Scd3xTemperatureOffset
+from data_types import Scd3xTemperatureOffsetDegC
 import logging
 import struct
 
 
 def interpret_as_float(integer: int):
-  return struct.unpack('!f', struct.pack('!I', integer))[0]
+    return struct.unpack('!f', struct.pack('!I', integer))[0]
+
+
+def _crc8(self, word: int):
+    """Computes the CRC-8 checksum as per the SCD30 interface description.
+    Parameters:
+        word: two-byte integer word value to compute the checksum over.
+    Returns:
+        single-byte integer CRC-8 checksum.
+    Polynomial: x^8 + x^5 + x^4 + 1 (0x31, MSB)
+    Initialization: 0xFF
+    Algorithm adapted from:
+    https://en.wikipedia.org/wiki/Computation_of_cyclic_redundancy_checks
+    """
+    self._check_word(word, "word")
+    polynomial = 0x31
+    rem = 0xFF
+    word_bytes = word.to_bytes(2, "big")
+    for byte in word_bytes:
+        rem ^= byte
+        for _ in range(8):
+            if rem & 0x80:
+                rem = (rem << 1) ^ polynomial
+            else:
+                rem = rem << 1
+            rem &= 0xFF
+
+    return rem
 
 
 class Scd3xI2cCmdBase(SensirionI2cCommand):
@@ -211,14 +236,58 @@ class Scd3XI2CCmdSetTemperatureOffset(Scd3xI2cCmdBase):
         :param int t_offset:
             Temperature offset in degree celsius
         """
+
+        raw_data = [t_offset.to_bytes(2, "big"), _crc8(t_offset)]
+
         super(Scd3XI2CCmdSetTemperatureOffset, self).__init__(
             command=0x5403,
-            tx_data=b"".join([pack(">H", Scd3xTemperatureOffsetDegC(t_offset).ticks)]),
+            tx_data=raw_data,
             rx_length=None,
             read_delay=0.0,
             timeout=0.05,
             post_processing_time=0.001,
         )
+
+
+class Scd3xI2cCmdGetTemperatureOffset(Scd3xI2cCmdBase):
+    """
+    Get Temperature Offset I²C Command
+    The temperature offset represents the difference between the measured
+    temperature by the SCD4x and the actual ambient temperature. Per default,
+    the temperature offset is set to 4°C.
+    .. note:: Only available in idle mode.
+    """
+
+    def __init__(self):
+        """
+        Constructor.
+        """
+        super(Scd3xI2cCmdGetTemperatureOffset, self).__init__(
+            command=0x5403,
+            tx_data=None,
+            rx_length=3,
+            read_delay=0.001,
+            timeout=0,
+            post_processing_time=0.0,
+        )
+
+    def interpret_response(self, data):
+        """
+        Validates the CRCs of the received data from the device and returns
+        the interpreted data.
+        :param bytes data:
+            Received raw bytes from the read operation.
+        :return:
+            - temperature offset (:py:class:`~sensirion_i2c_scd.scd4x.response_types.Scd4xTemperatureOffset`) -
+              TemperatureOffset response object.
+        :raise ~sensirion_i2c_driver.errors.I2cChecksumError:
+            If a received CRC was wrong.
+        """
+        # check and remove CRCs
+        checked_data = Scd3xI2cCmdBase.interpret_response(self, data)
+
+        # convert raw received data into proper data types
+        return int.from_bytes(checked_data[:2], "big") / 100
 
 
 class Scd3XI2CCmdSetAutomaticSelfCalibration(Scd3xI2cCmdBase):

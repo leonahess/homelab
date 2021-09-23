@@ -3,7 +3,6 @@ from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
 from sensirion_shdlc_sensorbridge import SensorBridgePort, \
     SensorBridgeShdlcDevice, SensorBridgeI2cProxy
 from sensirion_i2c_driver import I2cConnection
-from __init__ import SCD30Test
 
 from scd3x.device import Scd3xI2cDevice
 
@@ -39,7 +38,6 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
 
     # Create SCD41 device
     i2c_transceiver = SensorBridgeI2cProxy(bridge, port=SensorBridgePort.ONE)
-    #scd30 = SCD30Test(I2cConnection(i2c_transceiver))
     scd30 = Scd3xI2cDevice(I2cConnection(i2c_transceiver))
 
     logging.basicConfig(level=logging.INFO)
@@ -65,17 +63,18 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
 
     # 2 seconds is the minimum supported interval.
     measurement_interval = 2
-
     #logging.info("Setting measurement interval to 2s...")
     #scd30.set_measurement_interval(measurement_interval)
+    logging.info("Getting temp offset...")
+    scd30.get_temperature_offset()
+    logging.info("Setting temp offset interval to 2 C...")
+    scd30.set_temperature_offset(2.0)
     logging.info("Enabling automatic self-calibration...")
-    scd30.set_automatic_self_calibration(1)
+    scd30.set_automatic_self_calibration(True)
     logging.info("Starting periodic measurement...")
     scd30.start_periodic_measurement()
 
     time.sleep(measurement_interval)
-
-    #logging.info(f"Temperature offset: {scd30.get_temperature_offset()}'C")
 
     try:
         continuous_reading(scd30)
