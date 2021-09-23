@@ -30,8 +30,8 @@ def continuous_reading(scd30: Scd3xI2cDevice):
             if measurement is not None:
                 co2, temp, rh = measurement
                 logging.debug(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
-                write_to_influx("humidity", "humidity", float(co2))
-                write_to_influx("humidity", "humidity", float(temp))
+                write_to_influx("gas", "co2", float(co2))
+                write_to_influx("temperature", "temperature", float(temp))
                 write_to_influx("humidity", "humidity", float(rh))
             time.sleep(measurement_interval)
         else:
