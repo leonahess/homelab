@@ -47,19 +47,18 @@ git clone https://github.com/leonahess/homelab
 
 ```
 mkdir /mnt/appdata
-mkdir /mnt/appdata/unifi
+mkdir /mnt/appdata/plexmediaserver
 ```
 
 ### start service
 
 ```
-docker-compose -f /root/homelab/lxc/224-unifi/unifi-controller.yml up -d
+docker-compose -f /root/homelab/lxc/211-plex/plex.yml up -d
 ```
 
 ## Maintenance
 
-You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file. Unfortunately Grafana doesn't have a general version tag like `8.0` to get all minor version updates to version 8.0, 
-so updates to the service need to be done manually.
+You can setup some cronjobs to keep the lxc and the service up to date. For that install the cronjobs found in the crontab file. 
 
 ## SSL Certs
 
@@ -99,5 +98,5 @@ chgrp 100 /mnt/appdata/plexmediaserver/Library/Application\ Support/Plex\ Media\
 ### add cronjob to crontab
 
 ```
-0 1 1 * * sh /root/homelab/lxc/222-grafana/crons/certbot.sh
+0 1 1 * * sh /root/homelab/lxc/211-plex/crons/certbot.sh
 ```
