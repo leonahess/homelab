@@ -50,6 +50,15 @@ mkdir /mnt/appdata
 mkdir /mnt/appdata/plexmediaserver
 ```
 
+### create .env with the following in the `211-plex` folder:
+
+```
+TZ="Europe/Berlin"
+PLEX_CLAIM="YOUR-PLEX-CLAIM"
+PLEX_UID=99
+PLEX_GID=100
+```
+
 ### start service
 
 ```
