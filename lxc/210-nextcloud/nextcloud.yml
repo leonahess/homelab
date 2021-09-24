@@ -1,0 +1,40 @@
+version: "2.1"
+
+
+services:
+  mariadb:
+    image: linuxserver/mariadb
+    container_name: nextcloud-db
+    env_file:
+      - .env
+    volumes:
+      - /mnt/appdata/nextcloud-db:/config
+    restart: unless-stopped
+    networks:
+      - nextcloud
+
+  redis:
+    image: redis:alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    networks:
+      - nextcloud
+
+  nextcloud:
+    image: linuxserver/nextcloud
+    container_name: nextcloud
+    environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/appdata/nextcloud:/config
+      - /mnt/nextcloud-data:/data
+    ports:
+      - 443:443
+    restart: unless-stopped
+    networks:
+      - nextcloud
+
+networks:
+  nextcloud:
