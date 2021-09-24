@@ -1,0 +1,103 @@
+## Service config
+
+```
+     ip:  192.168.66.211
+ domain:  plex.leona.pink
+```
+
+## LXC Setup
+
+### update OS
+
+```
+apt update && apt upgrade -y && apt autoremove -y
+```
+
+### install tools
+
+```
+apt install curl git docker-compose
+```
+
+### install docker
+
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+
+### mount required shares into the lxc
+
+```
+pct set 211 -mp0 /mnt/unraid/media,mp=/mnt/bind/media
+
+
+## Service Setup
+
+The service is the Plex Media Server.
+The used docker images is here: https://hub.docker.com/r/linuxserver/unifi-controller
+
+### clone homelab repo
+
+```
+git clone https://github.com/leonahess/homelab
+```
+
+### create appdata directories
+
+```
+mkdir /mnt/appdata
+mkdir /mnt/appdata/unifi
+```
+
+### start service
+
+```
+docker-compose -f /root/homelab/lxc/224-unifi/unifi-controller.yml up -d
+```
+
+## Maintenance
+
+You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file. Unfortunately Grafana doesn't have a general version tag like `8.0` to get all minor version updates to version 8.0, 
+so updates to the service need to be done manually.
+
+## SSL Certs
+
+### Install certbot and cloudflare plugin
+
+```
+apt install certbot python3-certbot-dns-cloudflare
+```
+
+### Create cloudflare.ini with cloudflare credentials
+
+cloudflare.ini
+```
+dns_cloudflare_email=insert_your_email_here
+dns_cloudflare_api_key=insert_your_global_api_key_here
+```
+
+### get certs
+
+```
+certbot certonly --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/cloudflare.ini -d plex.leona.pink
+```
+
+### convert to pkcs12
+
+```
+openssl pkcs12 -export -out /mnt/appdata/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/cert.pfx -inkey /etc/letsencrypt/live/plex.leona.pink/privkey.pem -in /etc/letsencrypt/live/plex.leona.pink/cert.pem -certfile /etc/letsencrypt/live/plex.leona.pink/chain.pem
+```
+
+### chown and chgrp to plex user and group
+
+```
+chown 99 /mnt/appdata/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/cert.pfx
+chgrp 100 /mnt/appdata/plexmediaserver/Library/Application\ Support/Plex\ Media\ Server/cert.pfx
+```
+
+### add cronjob to crontab
+
+```
+0 1 1 * * sh /root/homelab/lxc/222-grafana/crons/certbot.sh
+```
