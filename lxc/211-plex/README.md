@@ -30,7 +30,7 @@ sudo sh get-docker.sh
 
 ```
 pct set 211 -mp0 /mnt/unraid/media,mp=/mnt/bind/media
-
+```
 
 ## Service Setup
 
