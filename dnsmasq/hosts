@@ -3,10 +3,9 @@
 ff02::1		ip6-allnodes
 ff02::2		ip6-allrouters
 
-192.168.66.2	dns
+192.168.66.1    fritzbox
+192.168.66.2	  dns
 192.168.66.3    wireguard
-
-192.168.66.89   proxbox1
 
 192.168.66.130  enviro1
 192.168.66.131  enviro2
@@ -30,3 +29,4 @@ ff02::2		ip6-allrouters
 192.168.66.222  grafana
 192.168.66.223  mx
 192.168.66.224  unifi
+192.168.66.225  rclone
