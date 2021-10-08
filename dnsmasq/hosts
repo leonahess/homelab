@@ -17,6 +17,7 @@ ff02::2		ip6-allrouters
 192.168.66.201  tinyprox1
 192.168.66.202  tinyprox2
 192.168.66.203  tinyprox3
+192.168.66.204  truenas
 
 192.168.66.210  nextcloud
 192.168.66.211  plex
