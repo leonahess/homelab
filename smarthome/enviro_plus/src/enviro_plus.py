@@ -1,9 +1,7 @@
 import logging
 import os
-import socket
 from dotenv import Dotenv
-import influxdb_client
-from influxdb_client.client.write_api import SYNCHRONOUS
+from prometheus_client import start_http_server, Summary, Gauge
 
 import time
 
@@ -26,34 +24,10 @@ os.environ.update(dotenv)
 #                                                                                                                      #
 ########################################################################################################################
 
-
 logging.basicConfig(
     format='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
-
-########################################################################################################################
-#                                                                                                                      #
-# Influx configuration                                                                                                 #
-#                                                                                                                      #
-########################################################################################################################
-
-
-bucket = os.getenv("INFLUX_BUCKET", "smarthome")
-org = os.getenv("INFLUX_ORG", "me")
-token = os.getenv("INFLUX_TOKEN")
-url = os.getenv("INFLUX_URL", "https://influx.leona.pink:8086")
-
-logging.info("Connecting to influx: %s" % url)
-
-client = influxdb_client.InfluxDBClient(
-    url=url,
-    token=token,
-    org=org
-)
-write_api = client.write_api(write_options=SYNCHRONOUS)
-
-logging.info("Connected to influx: %s" % url)
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -79,68 +53,51 @@ if pm_sensor == "True":
 #                                                                                                                      #
 ########################################################################################################################
 
-host = socket.gethostname()
-location = os.getenv("TAG_LOCATION", "default")
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-# Create a values dict to store the data
-variables = ["temperature",
-             "pressure",
-             "humidity",
-             "light",
-             "oxidised",
-             "reduced",
-             "nh3",
-             "pm1",
-             "pm25",
-             "pm10"]
+temp = Gauge('temperature_celsius', 'Temperature in celsius provided by the sensor')
+hum = Gauge('humidity_percent', 'Humidity in percents provided by the sensor')
+pres = Gauge('pressure_hectopascal', 'Pressure in percents provided by the sensor')
+lux = Gauge('illuminance_lux', 'Illuminance in lux provided by the sensor')
 
-units = ["C",
-         "hPa",
-         "%",
-         "Lux",
-         "kO",
-         "kO",
-         "kO",
-         "ug/m3",
-         "ug/m3",
-         "ug/m3"]
+oxidising = Gauge('resistance_oxidising_kiloohm', 'Oxidising gas resistance in kiloohm')
+reducing = Gauge('resistance_reducing_kiloohm', 'Reducing gas resistance in kiloohm')
+nh3 = Gauge('resistance_nh3_kiloohm', 'NH3 gas resistance in kiloohm')
 
-logging.info("Starting main loop")
+pm1 = Gauge('particulate_matter_1_microgram_per_cubic_meter', 'PM1 particulate matter in microgram per cubic meter')
+pm2_5 = Gauge('particulate_matter_2_5_microgram_per_cubic_meter', 'PM2,5 particulate matter in microgram per cubic meter')
+pm10 = Gauge('particulate_matter_10_microgram_per_cubic_meter', 'PM10 particulate matter in microgram per cubic meter')
+
+l003 = Gauge('particles_per_300_nanometer_per_deciliter', '300 nanometer sized Particles in the air per deciliter')
+l005 = Gauge('particles_per_500_nanometer_per_deciliter', '500 nanometer sized Particles in the air per deciliter')
+l010 = Gauge('particles_per_1000_nanometer_per_deciliter', '1000 nanometer sized Particles in the air per deciliter')
+l025 = Gauge('particles_per_2500_nanometer_per_deciliter', '2500 nanometer sized Particles in the air per deciliter')
+l050 = Gauge('particles_per_5000_nanometer_per_deciliter', '5000 nanometer sized Particles in the air per deciliter')
+l100 = Gauge('particles_per_10000_nanometer_per_deciliter', '10000 nanometer sized Particles in the air per deciliter')
 
 
-def write_to_influx(measurement, field, field_data):
-    point = influxdb_client.Point(measurement).tag("host", host).tag("location", location).field(field, field_data)
-    write_api.write(bucket=bucket, org=org, record=point)
-
-
-while True:
+@REQUEST_TIME.time()
+def process_request():
     proximity = ltr559.get_proximity()
 
     # Unit: C
-    temp = bme280.get_temperature()
-    write_to_influx("temperature", "temperature", float(temp))
+    temp.set(float(bme280.get_temperature()))
     # Unit: %
-    pressure = bme280.get_pressure()
-    write_to_influx("pressure", "pressure", float(pressure))
+    pres.set(float(bme280.get_pressure()))
     # Unit: hPa
-    humidity = bme280.get_humidity()
-    write_to_influx("humidity", "humidity", float(humidity))
+    hum.set(float(bme280.get_humidity()))
 
     # Unit: Lux
     if proximity < 10:
-        lux = ltr559.get_lux()
+        lux.set(ltr559.get_lux())
     else:
-        lux = 1
-    write_to_influx("light", "light", float(lux))
+        lux.set(1)
 
     # Unit: kOhm
     gas_data = gas.read_all()
-    oxidising = gas_data.oxidising / 1000
-    reducing = gas_data.reducing / 1000
-    nh3 = gas_data.nh3 / 1000
-    write_to_influx("gas", "oxidising", int(oxidising))
-    write_to_influx("gas", "reducing", int(reducing))
-    write_to_influx("gas", "nh3", int(nh3))
+    oxidising.set(gas_data.oxidising / 1000)
+    reducing.set(gas_data.reducing / 1000)
+    nh3.set(gas_data.nh3 / 1000)
 
     # Unit: ug/m3
     if pm_sensor == "True":
@@ -150,25 +107,23 @@ while True:
         except (SerialTimeoutError, pmsReadTimeoutError):
             logging.warning("Failed to read PMS5003")
         else:
-            pm1 = float(pms_data.pm_ug_per_m3(1.0))
-            pm2_5 = float(pms_data.pm_ug_per_m3(2.5))
-            pm10 = float(pms_data.pm_ug_per_m3(10))
-            write_to_influx("particulate_matter", "pm1", pm1)
-            write_to_influx("particulate_matter", "pm2_5", pm2_5)
-            write_to_influx("particulate_matter", "pm10", pm10)
+            pm1.set(float(pms_data.pm_ug_per_m3(1.0)))
+            pm2_5.set(float(pms_data.pm_ug_per_m3(2.5)))
+            pm10.set(float(pms_data.pm_ug_per_m3(10)))
 
-            l003 = float(pms_data.pm_per_1l_air(0.3))
-            l005 = float(pms_data.pm_per_1l_air(0.5))
-            l010 = float(pms_data.pm_per_1l_air(1.0))
-            l025 = float(pms_data.pm_per_1l_air(2.5))
-            l050 = float(pms_data.pm_per_1l_air(5))
-            l100 = float(pms_data.pm_per_1l_air(10))
+            l003.set(float(pms_data.pm_per_1l_air(0.3)))
+            l005.set(float(pms_data.pm_per_1l_air(0.5)))
+            l010.set(float(pms_data.pm_per_1l_air(1.0)))
+            l025.set(float(pms_data.pm_per_1l_air(2.5)))
+            l050.set(float(pms_data.pm_per_1l_air(5)))
+            l100.set(float(pms_data.pm_per_1l_air(10)))
 
-            write_to_influx("particulate_matter", "l003", l003)
-            write_to_influx("particulate_matter", "l005", l005)
-            write_to_influx("particulate_matter", "l010", l010)
-            write_to_influx("particulate_matter", "l025", l025)
-            write_to_influx("particulate_matter", "l050", l050)
-            write_to_influx("particulate_matter", "l100", l100)
+
+if __name__ == '__main__':
+    start_http_server(8000)
+
+    while True:
+        process_request()
+        time.sleep(1)
 
 

@@ -1,7 +1,6 @@
-influxdb-client
 enviroplus
 smbus2
 RPi.GPIO
 setuptools
 dotenv
-
+prometheus-client
