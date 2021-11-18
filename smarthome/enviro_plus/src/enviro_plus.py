@@ -55,25 +55,25 @@ if pm_sensor == "True":
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-temp = Gauge('temperature_celsius', 'Temperature in celsius provided by the sensor')
-hum = Gauge('humidity_percent', 'Humidity in percents provided by the sensor')
-pres = Gauge('pressure_hectopascal', 'Pressure in percents provided by the sensor')
-lux = Gauge('illuminance_lux', 'Illuminance in lux provided by the sensor')
+temp = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor')
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor')
+pres = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor')
+lux = Gauge('smarthome_illuminance_lux', 'Illuminance in lux provided by the sensor')
 
-oxidising = Gauge('resistance_oxidising_kiloohm', 'Oxidising gas resistance in kiloohm')
-reducing = Gauge('resistance_reducing_kiloohm', 'Reducing gas resistance in kiloohm')
-nh3 = Gauge('resistance_nh3_kiloohm', 'NH3 gas resistance in kiloohm')
+oxidising = Gauge('smarthome_resistance_oxidising_kiloohm', 'Oxidising gas resistance in kiloohm')
+reducing = Gauge('smarthome_resistance_reducing_kiloohm', 'Reducing gas resistance in kiloohm')
+nh3 = Gauge('smarthome_resistance_nh3_kiloohm', 'NH3 gas resistance in kiloohm')
 
-pm1 = Gauge('particulate_matter_1_microgram_per_cubic_meter', 'PM1 particulate matter in microgram per cubic meter')
-pm2_5 = Gauge('particulate_matter_2_5_microgram_per_cubic_meter', 'PM2,5 particulate matter in microgram per cubic meter')
-pm10 = Gauge('particulate_matter_10_microgram_per_cubic_meter', 'PM10 particulate matter in microgram per cubic meter')
+pm1 = Gauge('smarthome_particulate_matter_1_microgram_per_cubic_meter', 'PM1 particulate matter in microgram per cubic meter')
+pm2_5 = Gauge('smarthome_particulate_matter_2_5_microgram_per_cubic_meter', 'PM2,5 particulate matter in microgram per cubic meter')
+pm10 = Gauge('smarthome_particulate_matter_10_microgram_per_cubic_meter', 'PM10 particulate matter in microgram per cubic meter')
 
-l003 = Gauge('particles_per_300_nanometer_per_deciliter', '300 nanometer sized Particles in the air per deciliter')
-l005 = Gauge('particles_per_500_nanometer_per_deciliter', '500 nanometer sized Particles in the air per deciliter')
-l010 = Gauge('particles_per_1000_nanometer_per_deciliter', '1000 nanometer sized Particles in the air per deciliter')
-l025 = Gauge('particles_per_2500_nanometer_per_deciliter', '2500 nanometer sized Particles in the air per deciliter')
-l050 = Gauge('particles_per_5000_nanometer_per_deciliter', '5000 nanometer sized Particles in the air per deciliter')
-l100 = Gauge('particles_per_10000_nanometer_per_deciliter', '10000 nanometer sized Particles in the air per deciliter')
+l003 = Gauge('smarthome_particles_per_300_nanometer_per_deciliter', '300 nanometer sized Particles in the air per deciliter')
+l005 = Gauge('smarthome_particles_per_500_nanometer_per_deciliter', '500 nanometer sized Particles in the air per deciliter')
+l010 = Gauge('smarthome_particles_per_1000_nanometer_per_deciliter', '1000 nanometer sized Particles in the air per deciliter')
+l025 = Gauge('smarthome_particles_per_2500_nanometer_per_deciliter', '2500 nanometer sized Particles in the air per deciliter')
+l050 = Gauge('smarthome_particles_per_5000_nanometer_per_deciliter', '5000 nanometer sized Particles in the air per deciliter')
+l100 = Gauge('smarthome_particles_per_10000_nanometer_per_deciliter', '10000 nanometer sized Particles in the air per deciliter')
 
 
 @REQUEST_TIME.time()
