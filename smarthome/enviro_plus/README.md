@@ -1,8 +1,8 @@
-# Script to read Pimoroni's Enviroplus Hat and write to InfluxDB
+# Script to read Pimoroni's Enviroplus Hat and expose prometheus exporter
 
 
 - https://github.com/pimoroni/enviroplus-python
-- https://docs.influxdata.com/influxdb/v2.0/api-guide/client-libraries/python/
+- https://github.com/prometheus/client_python
 
 ## Setup the Pi
 
@@ -28,11 +28,6 @@ nano /home/pi/homelab/smarthome/enviro_plus/src/.env
 
 .env file:
 ```
-INFLUX_BUCKET=smarthome
-INFLUX_ORG=me
-INFLUX_TOKEN=add_your_influx_token_here
-INFLUX_URL=https://influx.leona.pink:8086
-TAG_LOCATION=leona_backyard
 PM_SENSOR=True
 ```
 

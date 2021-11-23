@@ -1,10 +1,8 @@
 import logging
 import os
+import time
 from dotenv import Dotenv
 from prometheus_client import start_http_server, Summary, Gauge
-
-import time
-
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError, SerialTimeoutError
 from enviroplus import gas

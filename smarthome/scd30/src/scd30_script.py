@@ -1,45 +1,15 @@
 import time
-from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
-from sensirion_shdlc_sensorbridge import SensorBridgePort, \
-    SensorBridgeShdlcDevice, SensorBridgeI2cProxy
-from sensirion_i2c_driver import I2cConnection
-
-from scd3x.device import Scd3xI2cDevice
-
-from dotenv import Dotenv
-import influxdb_client
-from influxdb_client.client.write_api import SYNCHRONOUS
 import os
 import socket
 import logging
 
+from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
+from sensirion_shdlc_sensorbridge import SensorBridgePort, \
+    SensorBridgeShdlcDevice, SensorBridgeI2cProxy
+from sensirion_i2c_driver import I2cConnection
+from scd3x.device import Scd3xI2cDevice
+from prometheus_client import start_http_server, Summary, Gauge
 
-def write_to_influx(measurement, field, field_data):
-    point = influxdb_client.Point(measurement).tag("host", host).tag("location", location).field(field, field_data)
-    write_api.write(bucket=bucket, org=org, record=point)
-
-
-def continuous_reading(scd30: Scd3xI2cDevice):
-    while True:
-        logging.debug("Data ready: {}".format(scd30.get_data_ready_status()))
-        if scd30.get_data_ready_status():
-            logging.debug("Reading from sensor.")
-            measurement = scd30.read_measurement()
-            logging.debug("Read from sensor.")
-            logging.debug("Measurement: {}".format(measurement))
-            if measurement is not None:
-                co2, temp, rh = measurement
-                logging.debug(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
-                write_to_influx("gas", "co2", float(co2))
-                write_to_influx("temperature", "temperature", float(temp))
-                write_to_influx("humidity", "humidity", float(rh))
-            time.sleep(measurement_interval)
-        else:
-            time.sleep(0.2)
-
-
-dotenv = Dotenv(os.path.join(os.path.dirname(__file__), ".env"))
-os.environ.update(dotenv)
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -53,28 +23,6 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-########################################################################################################################
-#                                                                                                                      #
-# Influx configuration                                                                                                 #
-#                                                                                                                      #
-########################################################################################################################
-
-
-bucket = os.getenv("INFLUX_BUCKET", "smarthome")
-org = os.getenv("INFLUX_ORG", "me")
-token = os.getenv("INFLUX_TOKEN")
-url = os.getenv("INFLUX_URL", "https://influx.leona.pink:8086")
-
-logging.info("Connecting to influx: %s" % url)
-
-client = influxdb_client.InfluxDBClient(
-    url=url,
-    token=token,
-    org=org
-)
-write_api = client.write_api(write_options=SYNCHRONOUS)
-
-logging.info("Connected to influx: %s" % url)
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -82,10 +30,12 @@ logging.info("Connected to influx: %s" % url)
 #                                                                                                                      #
 ########################################################################################################################
 
-host = socket.gethostname()
-location = os.getenv("TAG_LOCATION", "default")
 
-logging.info("Starting main loop")
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
+
+tempe = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor')
+gas = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the sensor')
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor')
 
 
 ########################################################################################################################
@@ -93,6 +43,30 @@ logging.info("Starting main loop")
 # Initialize Sensors                                                                                                   #
 #                                                                                                                      #
 ########################################################################################################################
+
+
+@REQUEST_TIME.time()
+def continuous_reading(scd30: Scd3xI2cDevice):
+    while True:
+        logging.debug("Data ready: {}".format(scd30.get_data_ready_status()))
+        if scd30.get_data_ready_status():
+            logging.debug("Reading from sensor.")
+            measurement = scd30.read_measurement()
+            logging.debug("Read from sensor.")
+            logging.debug("Measurement: {}".format(measurement))
+            if measurement is not None:
+                co2, temp, rh = measurement
+                logging.debug(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
+                gas.set(float(co2))
+                tempe.set(float(temp))
+                hum.set(float(rh))
+            time.sleep(measurement_interval)
+        else:
+            time.sleep(0.2)
+        time.sleep(1)
+
+
+logging.info("Starting main loop")
 
 # Connect to the SensorBridge with default settings:
 #  - baudrate:      460800
@@ -148,6 +122,7 @@ with ShdlcSerialPort(port='/dev/ttyUSB0', baudrate=460800) as port:
 
     time.sleep(measurement_interval)
 
+    start_http_server(8001)
     try:
         continuous_reading(scd30)
     except KeyboardInterrupt:

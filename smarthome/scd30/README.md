@@ -1,4 +1,4 @@
-# Script to read Sensirio's SCD30 CO2 sensor and write to InfluxDB
+# Script to read Sensirio's SCD30 CO2 sensor and expose prometheus exporter
 
 The Sensor is connected to sensirios Sensor Bridge, which is connected to a Raspberry Pi. In `./src/scd3x` I have adapted 
 Sensirio's [SCD4x python driver](https://github.com/Sensirion/python-i2c-scd) to work with the SCD30. There was
@@ -9,7 +9,7 @@ an [existing SCD30 driver](https://github.com/RequestForCoffee/scd30) but that d
 - https://sensirion.github.io/python-shdlc-driver/index.html
 - https://sensirion.github.io/python-i2c-driver/index.html
 - https://sensirion.github.io/python-shdlc-sensorbridge/index.html
-- https://docs.influxdata.com/influxdb/v2.0/api-guide/client-libraries/python/
+- https://github.com/prometheus/client_python
 
 ## Setup the Pi
 
@@ -32,20 +32,6 @@ ACTION=="add", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="7168", RUN+="/sbin/mo
 4. Plug in the device.
 
 ## Setup the script
-
-Create .env file in /home/pi/homelab/smarthome/scd30/src
-```
-nano /home/pi/homelab/smarthome/scd30/src/.env
-```
-
-.env file:
-```
-INFLUX_BUCKET=smarthome
-INFLUX_ORG=me
-INFLUX_TOKEN=add_your_influx_token_here
-INFLUX_URL=https://influx.leona.pink:8086
-TAG_LOCATION=leona_desk
-```
 
 Install python modules
 ```

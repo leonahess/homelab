@@ -1,5 +1,5 @@
 sensirion-shdlc-sensorbridge
 sensirion_i2c_driver
-influxdb-client
+prometheus-client
 smbus2
 dotenv
