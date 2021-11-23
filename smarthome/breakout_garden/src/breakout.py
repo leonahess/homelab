@@ -90,34 +90,26 @@ SGP_LOCATION = os.getenv("SGP30_SENSOR_TAG_LOCATION", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-if bme688_sensor_primary == "1":
-    temp1 = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
-    pressure1 = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
-    hum1 = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
-
-if bme688_sensor_secondary == "1":
-    temp2 = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
-    pressure2 = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
-    hum2 = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
-
-if sgp30_sensor == "1":
-    eco2 = Gauge('smarthome_eco2_ppm', 'equivalent CO2 concentration in ppm, provided by the sensor', ['location'])
-    tvoc = Gauge('smarthome_tvoc_ppb', 'TVOC concentration in ppb, provided by the sensor', ['location'])
+temp = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
+pressure = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
+eco2 = Gauge('smarthome_eco2_ppm', 'equivalent CO2 concentration in ppm, provided by the sensor', ['location'])
+tvoc = Gauge('smarthome_tvoc_ppb', 'TVOC concentration in ppb, provided by the sensor', ['location'])
 
 
 @REQUEST_TIME.time()
 def process_request():
     if bme688_sensor_primary == "1":
         if sensor1.get_sensor_data():
-            temp1.labels(location=LOCATION1).set(float(sensor1.data.temperature))
-            pressure1.labels(location=LOCATION1).set(float(sensor1.data.pressure))
-            hum1.labels(locatin=LOCATION1).set(float(sensor1.data.humidity))
+            temp.labels(location=LOCATION1).set(float(sensor1.data.temperature))
+            pressure.labels(location=LOCATION1).set(float(sensor1.data.pressure))
+            hum.labels(locatin=LOCATION1).set(float(sensor1.data.humidity))
 
     if bme688_sensor_secondary == "1":
         if sensor2.get_sensor_data():
-            temp2.labels(location=LOCATION2).set(float(sensor1.data.temperature))
-            pressure2.labels(location=LOCATION2).set(float(sensor1.data.pressure))
-            hum2.labels(location=LOCATION2).set(float(sensor1.data.humidity))
+            temp.labels(location=LOCATION2).set(float(sensor1.data.temperature))
+            pressure.labels(location=LOCATION2).set(float(sensor1.data.pressure))
+            hum.labels(location=LOCATION2).set(float(sensor1.data.humidity))
 
     if sgp30_sensor == "1":
         res = sgp30.get_air_quality()
