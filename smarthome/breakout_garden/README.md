@@ -22,6 +22,8 @@ nano /home/pi/homelab/smarthome/bme688/src/.env
 
 .env file:
 ```
+ROOM=kitchen
+
 SGP30_SENSOR=0
 VEML6075_SENSOR=0
 BME688_SENSOR_PRIMARY=0

@@ -87,34 +87,35 @@ if sgp30_sensor == "1":
 LOCATION1 = os.getenv("BME688_SENSOR_PRIMARY_TAG_LOCATION", "default")
 LOCATION2 = os.getenv("BME688_SENSOR_SECONDARY_TAG_LOCATION", "default")
 SGP_LOCATION = os.getenv("SGP30_SENSOR_TAG_LOCATION", "default")
+ROOM = os.getenv("ROOM", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-temp = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
-pressure = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
-hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
-eco2 = Gauge('smarthome_eco2_ppm', 'equivalent CO2 concentration in ppm, provided by the sensor', ['location'])
-tvoc = Gauge('smarthome_tvoc_ppb', 'TVOC concentration in ppb, provided by the sensor', ['location'])
+temp = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location', 'room'])
+pressure = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location', 'room'])
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location', 'room'])
+eco2 = Gauge('smarthome_eco2_ppm', 'equivalent CO2 concentration in ppm, provided by the sensor', ['location', 'room'])
+tvoc = Gauge('smarthome_tvoc_ppb', 'TVOC concentration in ppb, provided by the sensor', ['location', 'room'])
 
 
 @REQUEST_TIME.time()
 def process_request():
     if bme688_sensor_primary == "1":
         if sensor1.get_sensor_data():
-            temp.labels(location=LOCATION1).set(float(sensor1.data.temperature))
-            pressure.labels(location=LOCATION1).set(float(sensor1.data.pressure))
-            hum.labels(location=LOCATION1).set(float(sensor1.data.humidity))
+            temp.labels(location=LOCATION1, room=ROOM).set(float(sensor1.data.temperature))
+            pressure.labels(location=LOCATION1, room=ROOM).set(float(sensor1.data.pressure))
+            hum.labels(location=LOCATION1, room=ROOM).set(float(sensor1.data.humidity))
 
     if bme688_sensor_secondary == "1":
         if sensor2.get_sensor_data():
-            temp.labels(location=LOCATION2).set(float(sensor2.data.temperature))
-            pressure.labels(location=LOCATION2).set(float(sensor2.data.pressure))
-            hum.labels(location=LOCATION2).set(float(sensor2.data.humidity))
+            temp.labels(location=LOCATION2, room=ROOM).set(float(sensor2.data.temperature))
+            pressure.labels(location=LOCATION2, room=ROOM).set(float(sensor2.data.pressure))
+            hum.labels(location=LOCATION2, room=ROOM).set(float(sensor2.data.humidity))
 
     if sgp30_sensor == "1":
         res = sgp30.get_air_quality()
-        eco2.labels(location=SGP_LOCATION).set(int(res.equivalent_co2))
-        tvoc.labels(location=SGP_LOCATION).set(int(res.total_voc))
+        eco2.labels(location=SGP_LOCATION, room=ROOM).set(int(res.equivalent_co2))
+        tvoc.labels(location=SGP_LOCATION, room=ROOM).set(int(res.total_voc))
 
 
 logging.info("Starting main loop")

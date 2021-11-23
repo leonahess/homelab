@@ -34,12 +34,13 @@ logging.basicConfig(
 ########################################################################################################################
 
 LOCATION = os.getenv("LOCATION", "default")
+ROOM = os.getenv("ROOM", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-tempe = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
-gas = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the sensor', ['location'])
-hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
+tempe = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location', 'room'])
+gas = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the sensor', ['location', 'room'])
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location', 'room'])
 
 
 ########################################################################################################################
@@ -61,9 +62,9 @@ def continuous_reading(scd30: Scd3xI2cDevice):
             if measurement is not None:
                 co2, temp, rh = measurement
                 logging.debug(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
-                gas.labels(location=LOCATION).set(float(co2))
-                tempe.labels(location=LOCATION).set(float(temp))
-                hum.labels(location=LOCATION).set(float(rh))
+                gas.labels(location=LOCATION, room=ROOM).set(float(co2))
+                tempe.labels(location=LOCATION, room=ROOM).set(float(temp))
+                hum.labels(location=LOCATION, room=ROOM).set(float(rh))
             time.sleep(measurement_interval)
         else:
             time.sleep(0.2)

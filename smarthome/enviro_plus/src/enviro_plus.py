@@ -53,28 +53,29 @@ if pm_sensor == "True":
 
 
 LOCATION = os.getenv("LOCATION", "default")
+ROOM = os.getenv("ROOM", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-temp = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
-hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
-pres = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
-lux = Gauge('smarthome_illuminance_lux', 'Illuminance in lux provided by the sensor', ['location'])
+temp = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location', 'room'])
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location', 'room'])
+pres = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location', 'room'])
+lux = Gauge('smarthome_illuminance_lux', 'Illuminance in lux provided by the sensor', ['location', 'room'])
 
-oxidising = Gauge('smarthome_resistance_oxidising_kiloohm', 'Oxidising gas resistance in kiloohm', ['location'])
-reducing = Gauge('smarthome_resistance_reducing_kiloohm', 'Reducing gas resistance in kiloohm', ['location'])
-nh3 = Gauge('smarthome_resistance_nh3_kiloohm', 'NH3 gas resistance in kiloohm', ['location'])
+oxidising = Gauge('smarthome_resistance_oxidising_kiloohm', 'Oxidising gas resistance in kiloohm', ['location', 'room'])
+reducing = Gauge('smarthome_resistance_reducing_kiloohm', 'Reducing gas resistance in kiloohm', ['location', 'room'])
+nh3 = Gauge('smarthome_resistance_nh3_kiloohm', 'NH3 gas resistance in kiloohm', ['location', 'room'])
 
-pm1 = Gauge('smarthome_particulate_matter_1_microgram_per_cubic_meter', 'PM1 particulate matter in microgram per cubic meter', ['location'])
-pm2_5 = Gauge('smarthome_particulate_matter_2_5_microgram_per_cubic_meter', 'PM2,5 particulate matter in microgram per cubic meter', ['location'])
-pm10 = Gauge('smarthome_particulate_matter_10_microgram_per_cubic_meter', 'PM10 particulate matter in microgram per cubic meter', ['location'])
+pm1 = Gauge('smarthome_particulate_matter_1_microgram_per_cubic_meter', 'PM1 particulate matter in microgram per cubic meter', ['location', 'room'])
+pm2_5 = Gauge('smarthome_particulate_matter_2_5_microgram_per_cubic_meter', 'PM2,5 particulate matter in microgram per cubic meter', ['location', 'room'])
+pm10 = Gauge('smarthome_particulate_matter_10_microgram_per_cubic_meter', 'PM10 particulate matter in microgram per cubic meter', ['location', 'room'])
 
-l003 = Gauge('smarthome_particles_per_300_nanometer_per_deciliter', '300 nanometer sized Particles in the air per deciliter', ['location'])
-l005 = Gauge('smarthome_particles_per_500_nanometer_per_deciliter', '500 nanometer sized Particles in the air per deciliter', ['location'])
-l010 = Gauge('smarthome_particles_per_1000_nanometer_per_deciliter', '1000 nanometer sized Particles in the air per deciliter', ['location'])
-l025 = Gauge('smarthome_particles_per_2500_nanometer_per_deciliter', '2500 nanometer sized Particles in the air per deciliter', ['location'])
-l050 = Gauge('smarthome_particles_per_5000_nanometer_per_deciliter', '5000 nanometer sized Particles in the air per deciliter', ['location'])
-l100 = Gauge('smarthome_particles_per_10000_nanometer_per_deciliter', '10000 nanometer sized Particles in the air per deciliter', ['location'])
+l003 = Gauge('smarthome_particles_per_300_nanometer_per_deciliter', '300 nanometer sized Particles in the air per deciliter', ['location', 'room'])
+l005 = Gauge('smarthome_particles_per_500_nanometer_per_deciliter', '500 nanometer sized Particles in the air per deciliter', ['location', 'room'])
+l010 = Gauge('smarthome_particles_per_1000_nanometer_per_deciliter', '1000 nanometer sized Particles in the air per deciliter', ['location', 'room'])
+l025 = Gauge('smarthome_particles_per_2500_nanometer_per_deciliter', '2500 nanometer sized Particles in the air per deciliter', ['location', 'room'])
+l050 = Gauge('smarthome_particles_per_5000_nanometer_per_deciliter', '5000 nanometer sized Particles in the air per deciliter', ['location', 'room'])
+l100 = Gauge('smarthome_particles_per_10000_nanometer_per_deciliter', '10000 nanometer sized Particles in the air per deciliter', ['location', 'room'])
 
 
 @REQUEST_TIME.time()
@@ -82,23 +83,23 @@ def process_request():
     proximity = ltr559.get_proximity()
 
     # Unit: C
-    temp.labels(location=LOCATION).set(float(bme280.get_temperature()))
+    temp.labels(location=LOCATION, room=ROOM).set(float(bme280.get_temperature()))
     # Unit: %
-    pres.labels(location=LOCATION).set(float(bme280.get_pressure()))
+    pres.labels(location=LOCATION, room=ROOM).set(float(bme280.get_pressure()))
     # Unit: hPa
-    hum.labels(location=LOCATION).set(float(bme280.get_humidity()))
+    hum.labels(location=LOCATION, room=ROOM).set(float(bme280.get_humidity()))
 
     # Unit: Lux
     if proximity < 10:
-        lux.labels(location=LOCATION).set(ltr559.get_lux())
+        lux.labels(location=LOCATION, room=ROOM).set(ltr559.get_lux())
     else:
-        lux.labels(location=LOCATION).set(1)
+        lux.labels(location=LOCATION, room=ROOM).set(1)
 
     # Unit: kOhm
     gas_data = gas.read_all()
-    oxidising.labels(location=LOCATION).set(gas_data.oxidising / 1000)
-    reducing.labels(location=LOCATION).set(gas_data.reducing / 1000)
-    nh3.labels(location=LOCATION).set(gas_data.nh3 / 1000)
+    oxidising.labels(location=LOCATION, room=ROOM).set(gas_data.oxidising / 1000)
+    reducing.labels(location=LOCATION, room=ROOM).set(gas_data.reducing / 1000)
+    nh3.labels(location=LOCATION, room=ROOM).set(gas_data.nh3 / 1000)
 
     # Unit: ug/m3
     if pm_sensor == "True":
@@ -108,16 +109,16 @@ def process_request():
         except (SerialTimeoutError, pmsReadTimeoutError):
             logging.warning("Failed to read PMS5003")
         else:
-            pm1.labels(location=LOCATION).set(float(pms_data.pm_ug_per_m3(1.0)))
-            pm2_5.labels(location=LOCATION).set(float(pms_data.pm_ug_per_m3(2.5)))
-            pm10.labels(location=LOCATION).set(float(pms_data.pm_ug_per_m3(10)))
+            pm1.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_ug_per_m3(1.0)))
+            pm2_5.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_ug_per_m3(2.5)))
+            pm10.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_ug_per_m3(10)))
 
-            l003.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(0.3)))
-            l005.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(0.5)))
-            l010.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(1.0)))
-            l025.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(2.5)))
-            l050.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(5)))
-            l100.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(10)))
+            l003.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_per_1l_air(0.3)))
+            l005.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_per_1l_air(0.5)))
+            l010.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_per_1l_air(1.0)))
+            l025.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_per_1l_air(2.5)))
+            l050.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_per_1l_air(5)))
+            l100.labels(location=LOCATION, room=ROOM).set(float(pms_data.pm_per_1l_air(10)))
 
 
 if __name__ == '__main__':

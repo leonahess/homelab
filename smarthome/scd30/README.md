@@ -41,6 +41,7 @@ nano /home/pi/homelab/smarthome/scd30/src/.env
 .env file:
 ```
 LOCATION=default
+ROOM=kitchen
 ```
 
 Install python modules
