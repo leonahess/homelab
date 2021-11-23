@@ -33,6 +33,16 @@ ACTION=="add", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="7168", RUN+="/sbin/mo
 
 ## Setup the script
 
+Create .env file in /home/pi/homelab/smarthome/scd30/src
+```
+nano /home/pi/homelab/smarthome/scd30/src/.env
+```
+
+.env file:
+```
+LOCATION=default
+```
+
 Install python modules
 ```
 pip3 install -r requirements.txt

@@ -1,11 +1,14 @@
 import logging
 import os
 import socket
-from dotenv import Dotenv
-import influxdb_client
-from influxdb_client.client.write_api import SYNCHRONOUS
+import time
 import bme680
+
+from dotenv import Dotenv
+from prometheus_client import start_http_server, Summary, Gauge
 from sgp30 import SGP30
+
+
 ########################################################################################################################
 #                                                                                                                      #
 # Load .env file and load ENVs                                                                                         #
@@ -102,27 +105,50 @@ if sgp30_sensor == "1":
 #                                                                                                                      #
 ########################################################################################################################
 
+LOCATION1 = os.getenv("BME688_SENSOR_PRIMARY_TAG_LOCATION", "default")
+LOCATION2 = os.getenv("BME688_SENSOR_SECONDARY_TAG_LOCATION", "default")
+SGP_LOCATION = os.getenv("SGP30_SENSOR_TAG_LOCATION", "default")
 
-def write_to_influx(measurement, field, field_data, location_data):
-    point = influxdb_client.Point(measurement).tag("host", host).tag("location", location_data).field(field, field_data)
-    write_api.write(bucket=bucket, org=org, record=point)
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
+
+if bme688_sensor_primary == "1":
+    temp1 = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
+    pressure1 = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
+    hum1 = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
+
+if bme688_sensor_secondary == "1":
+    temp2 = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
+    pressure2 = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
+    hum2 = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
+
+if sgp30_sensor == "1":
+    eco2 = Gauge('smarthome_eco2_ppm', 'equivalent CO2 concentration in ppm, provided by the sensor', ['location'])
+    tvoc = Gauge('smarthome_tvoc_ppb', 'TVOC concentration in ppb, provided by the sensor', ['location'])
 
 
-logging.info("Starting main loop")
-while True:
+@REQUEST_TIME.time()
+def process_request():
     if bme688_sensor_primary == "1":
         if sensor1.get_sensor_data():
-            write_to_influx("temperature", "temperature", float(sensor1.data.temperature), bme688_sensor_primary_location)
-            write_to_influx("pressure", "pressure", float(sensor1.data.pressure), bme688_sensor_primary_location)
-            write_to_influx("humidity", "humidity", float(sensor1.data.humidity), bme688_sensor_primary_location)
+            temp1.labels(location=LOCATION1).set(float(sensor1.data.temperature))
+            pressure1.labels(location=LOCATION1).set(float(sensor1.data.pressure))
+            hum1.labels(locatin=LOCATION1).set(float(sensor1.data.humidity))
 
     if bme688_sensor_secondary == "1":
         if sensor2.get_sensor_data():
-            write_to_influx("temperature", "temperature", float(sensor2.data.temperature), bme688_sensor_secondary_location)
-            write_to_influx("pressure", "pressure", float(sensor2.data.pressure), bme688_sensor_secondary_location)
-            write_to_influx("humidity", "humidity", float(sensor2.data.humidity), bme688_sensor_secondary_location)
+            temp2.labels(location=LOCATION2).set(float(sensor1.data.temperature))
+            pressure2.labels(location=LOCATION2).set(float(sensor1.data.pressure))
+            hum2.labels(location=LOCATION2).set(float(sensor1.data.humidity))
 
     if sgp30_sensor == "1":
         res = sgp30.get_air_quality()
-        write_to_influx("gas", "eco2", int(res.equivalent_co2), sgp30_sensor_location)
-        write_to_influx("gas", "tvoc", int(res.total_voc), sgp30_sensor_location)
+        eco2.labels(location=SGP_LOCATION).set(int(res.equivalent_co2))
+        tvoc.labels(location=SGP_LOCATION).set(int(res.total_voc))
+
+
+logging.info("Starting main loop")
+
+start_http_server(8003)
+while True:
+    process_request()
+    time.sleep(1)

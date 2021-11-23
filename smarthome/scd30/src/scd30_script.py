@@ -3,6 +3,7 @@ import os
 import socket
 import logging
 
+from dotenv import Dotenv
 from sensirion_shdlc_driver import ShdlcSerialPort, ShdlcConnection
 from sensirion_shdlc_sensorbridge import SensorBridgePort, \
     SensorBridgeShdlcDevice, SensorBridgeI2cProxy
@@ -10,6 +11,8 @@ from sensirion_i2c_driver import I2cConnection
 from scd3x.device import Scd3xI2cDevice
 from prometheus_client import start_http_server, Summary, Gauge
 
+dotenv = Dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+os.environ.update(dotenv)
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -30,12 +33,13 @@ logging.basicConfig(
 #                                                                                                                      #
 ########################################################################################################################
 
+LOCATION = os.getenv("LOCATION", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-tempe = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor')
-gas = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the sensor')
-hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor')
+tempe = Gauge('smarthome_temperature_celsius', 'Temperature in celsius provided by the sensor', ['location'])
+gas = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the sensor', ['location'])
+hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the sensor', ['location'])
 
 
 ########################################################################################################################
@@ -57,9 +61,9 @@ def continuous_reading(scd30: Scd3xI2cDevice):
             if measurement is not None:
                 co2, temp, rh = measurement
                 logging.debug(f"CO2: {co2:.2f}ppm, temp: {temp:.2f}'C, rh: {rh:.2f}%")
-                gas.set(float(co2))
-                tempe.set(float(temp))
-                hum.set(float(rh))
+                gas.labels(location=LOCATION).set(float(co2))
+                tempe.labels(location=LOCATION).set(float(temp))
+                hum.labels(location=LOCATION).set(float(rh))
             time.sleep(measurement_interval)
         else:
             time.sleep(0.2)

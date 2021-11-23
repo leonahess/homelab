@@ -22,11 +22,6 @@ nano /home/pi/homelab/smarthome/bme688/src/.env
 
 .env file:
 ```
-INFLUX_BUCKET=smarthome
-INFLUX_ORG=me
-INFLUX_TOKEN=add_your_influx_token_here
-INFLUX_URL=https://influx.leona.pink:8086
-
 SGP30_SENSOR=0
 VEML6075_SENSOR=0
 BME688_SENSOR_PRIMARY=0
