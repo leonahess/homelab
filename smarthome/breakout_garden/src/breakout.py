@@ -103,7 +103,7 @@ def process_request():
         if sensor1.get_sensor_data():
             temp.labels(location=LOCATION1).set(float(sensor1.data.temperature))
             pressure.labels(location=LOCATION1).set(float(sensor1.data.pressure))
-            hum.labels(locatin=LOCATION1).set(float(sensor1.data.humidity))
+            hum.labels(location=LOCATION1).set(float(sensor1.data.humidity))
 
     if bme688_sensor_secondary == "1":
         if sensor2.get_sensor_data():
