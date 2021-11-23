@@ -41,27 +41,6 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-########################################################################################################################
-#                                                                                                                      #
-# Influx configuration                                                                                                 #
-#                                                                                                                      #
-########################################################################################################################
-
-bucket = os.getenv("INFLUX_BUCKET", "smarthome")
-org = os.getenv("INFLUX_ORG", "me")
-token = os.getenv("INFLUX_TOKEN")
-url = os.getenv("INFLUX_URL", "https://influx.leona.pink:8086")
-
-logging.info("Connecting to influx: %s" % url)
-
-client = influxdb_client.InfluxDBClient(
-    url=url,
-    token=token,
-    org=org
-)
-write_api = client.write_api(write_options=SYNCHRONOUS)
-
-logging.info("Connected to influx: %s" % url)
 
 ########################################################################################################################
 #                                                                                                                      #
