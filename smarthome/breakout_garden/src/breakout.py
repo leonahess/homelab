@@ -107,9 +107,9 @@ def process_request():
 
     if bme688_sensor_secondary == "1":
         if sensor2.get_sensor_data():
-            temp.labels(location=LOCATION2).set(float(sensor1.data.temperature))
-            pressure.labels(location=LOCATION2).set(float(sensor1.data.pressure))
-            hum.labels(location=LOCATION2).set(float(sensor1.data.humidity))
+            temp.labels(location=LOCATION2).set(float(sensor2.data.temperature))
+            pressure.labels(location=LOCATION2).set(float(sensor2.data.pressure))
+            hum.labels(location=LOCATION2).set(float(sensor2.data.humidity))
 
     if sgp30_sensor == "1":
         res = sgp30.get_air_quality()
