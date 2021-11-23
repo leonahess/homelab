@@ -61,26 +61,13 @@ hum = Gauge('smarthome_humidity_percent', 'Humidity in percents provided by the 
 pres = Gauge('smarthome_pressure_hectopascal', 'Pressure in percents provided by the sensor', ['location'])
 lux = Gauge('smarthome_illuminance_lux', 'Illuminance in lux provided by the sensor', ['location'])
 
-temp.labels(location=LOCATION)
-hum.labels(location=LOCATION)
-pres.labels(location=LOCATION)
-lux.labels(location=LOCATION)
-
 oxidising = Gauge('smarthome_resistance_oxidising_kiloohm', 'Oxidising gas resistance in kiloohm', ['location'])
 reducing = Gauge('smarthome_resistance_reducing_kiloohm', 'Reducing gas resistance in kiloohm', ['location'])
 nh3 = Gauge('smarthome_resistance_nh3_kiloohm', 'NH3 gas resistance in kiloohm', ['location'])
 
-oxidising.labels(location=LOCATION)
-reducing.labels(location=LOCATION)
-nh3.labels(location=LOCATION)
-
 pm1 = Gauge('smarthome_particulate_matter_1_microgram_per_cubic_meter', 'PM1 particulate matter in microgram per cubic meter', ['location'])
 pm2_5 = Gauge('smarthome_particulate_matter_2_5_microgram_per_cubic_meter', 'PM2,5 particulate matter in microgram per cubic meter', ['location'])
 pm10 = Gauge('smarthome_particulate_matter_10_microgram_per_cubic_meter', 'PM10 particulate matter in microgram per cubic meter', ['location'])
-
-pm1.labels(location=LOCATION)
-pm2_5.labels(location=LOCATION)
-pm10.labels(location=LOCATION)
 
 l003 = Gauge('smarthome_particles_per_300_nanometer_per_deciliter', '300 nanometer sized Particles in the air per deciliter', ['location'])
 l005 = Gauge('smarthome_particles_per_500_nanometer_per_deciliter', '500 nanometer sized Particles in the air per deciliter', ['location'])
@@ -89,12 +76,6 @@ l025 = Gauge('smarthome_particles_per_2500_nanometer_per_deciliter', '2500 nanom
 l050 = Gauge('smarthome_particles_per_5000_nanometer_per_deciliter', '5000 nanometer sized Particles in the air per deciliter', ['location'])
 l100 = Gauge('smarthome_particles_per_10000_nanometer_per_deciliter', '10000 nanometer sized Particles in the air per deciliter', ['location'])
 
-l003.labels(location=LOCATION)
-l005.labels(location=LOCATION)
-l010.labels(location=LOCATION)
-l025.labels(location=LOCATION)
-l050.labels(location=LOCATION)
-l100.labels(location=LOCATION)
 
 @REQUEST_TIME.time()
 def process_request():
