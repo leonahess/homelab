@@ -29,6 +29,7 @@ nano /home/pi/homelab/smarthome/enviro_plus/src/.env
 .env file:
 ```
 PM_SENSOR=True
+LOCATION=default
 ```
 
 Install python modules
