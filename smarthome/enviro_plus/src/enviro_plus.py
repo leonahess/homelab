@@ -101,23 +101,23 @@ def process_request():
     proximity = ltr559.get_proximity()
 
     # Unit: C
-    temp.set(float(bme280.get_temperature()))
+    temp.labels(location=LOCATION).set(float(bme280.get_temperature()))
     # Unit: %
-    pres.set(float(bme280.get_pressure()))
+    pres.labels(location=LOCATION).set(float(bme280.get_pressure()))
     # Unit: hPa
-    hum.set(float(bme280.get_humidity()))
+    hum.labels(location=LOCATION).set(float(bme280.get_humidity()))
 
     # Unit: Lux
     if proximity < 10:
-        lux.set(ltr559.get_lux())
+        lux.labels(location=LOCATION).set(ltr559.get_lux())
     else:
-        lux.set(1)
+        lux.labels(location=LOCATION).set(1)
 
     # Unit: kOhm
     gas_data = gas.read_all()
-    oxidising.set(gas_data.oxidising / 1000)
-    reducing.set(gas_data.reducing / 1000)
-    nh3.set(gas_data.nh3 / 1000)
+    oxidising.labels(location=LOCATION).set(gas_data.oxidising / 1000)
+    reducing.labels(location=LOCATION).set(gas_data.reducing / 1000)
+    nh3.labels(location=LOCATION).set(gas_data.nh3 / 1000)
 
     # Unit: ug/m3
     if pm_sensor == "True":
@@ -127,16 +127,16 @@ def process_request():
         except (SerialTimeoutError, pmsReadTimeoutError):
             logging.warning("Failed to read PMS5003")
         else:
-            pm1.set(float(pms_data.pm_ug_per_m3(1.0)))
-            pm2_5.set(float(pms_data.pm_ug_per_m3(2.5)))
-            pm10.set(float(pms_data.pm_ug_per_m3(10)))
+            pm1.labels(location=LOCATION).set(float(pms_data.pm_ug_per_m3(1.0)))
+            pm2_5.labels(location=LOCATION).set(float(pms_data.pm_ug_per_m3(2.5)))
+            pm10.labels(location=LOCATION).set(float(pms_data.pm_ug_per_m3(10)))
 
-            l003.set(float(pms_data.pm_per_1l_air(0.3)))
-            l005.set(float(pms_data.pm_per_1l_air(0.5)))
-            l010.set(float(pms_data.pm_per_1l_air(1.0)))
-            l025.set(float(pms_data.pm_per_1l_air(2.5)))
-            l050.set(float(pms_data.pm_per_1l_air(5)))
-            l100.set(float(pms_data.pm_per_1l_air(10)))
+            l003.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(0.3)))
+            l005.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(0.5)))
+            l010.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(1.0)))
+            l025.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(2.5)))
+            l050.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(5)))
+            l100.labels(location=LOCATION).set(float(pms_data.pm_per_1l_air(10)))
 
 
 if __name__ == '__main__':
