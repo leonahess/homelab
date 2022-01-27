@@ -2,6 +2,9 @@
 This repository has a collection of notes, configs and the likes I use to run my homelab.
 
 # General Setup
+
+![Rack-21-08-04](https://user-images.githubusercontent.com/32615985/151368328-c9ad006a-26d0-462e-b68f-eec2cc15f81e.jpg)
+
 ## Proxmox Hyperconverged Cluster
 Runs most services in the homelab. All services run in docker containers inside of LXC containers. A Ceph cluster allows for redundant and easily migratable storage of all services. A 10 gbit/s connection allows for a high cluster performance. See the `lxc` folder for templates of the different services.
 
