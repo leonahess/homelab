@@ -27,6 +27,25 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### Set json logging in docker
+Add the following to `/etc/docker/daemon.json`
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3",
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  }
+}
+```
+
+### Restart docker
+
+```
+systemctl restart docker
+```
+
 
 ## Service Setup
 
@@ -55,7 +74,7 @@ chown 472 /mnt/appdata/grafana
 ### start service
 
 ```
-docker-compose -f /root/homelab/lxc/222-grafana/grafana.yml up -d
+docker-compose -f /root/homelab/lxc/222-grafana/docker-compose.yml up -d
 ```
 
 ## Maintenance

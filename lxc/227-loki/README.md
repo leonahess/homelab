@@ -34,7 +34,8 @@ Add the following to `/etc/docker/daemon.json`
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "10m",
-    "max-file": "3" 
+    "max-file": "3",
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
   }
 }
 ```
