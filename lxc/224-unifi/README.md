@@ -72,5 +72,4 @@ docker-compose -f /root/homelab/lxc/224-unifi/docker-compose.yml up -d
 
 ## Maintenance
 
-You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file. Unfortunately Grafana doesn't have a general version tag like `8.0` to get all minor version updates to version 8.0, 
-so updates to the service need to be done manually.
+You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file.
