@@ -27,6 +27,24 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### Set json logging in docker
+Add the following to `/etc/docker/daemon.json`
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3",
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  }
+}
+```
+
+### Restart docker
+
+```
+systemctl restart docker
+```
 
 ## Service Setup
 
@@ -49,7 +67,7 @@ mkdir /mnt/appdata/unifi
 ### start service
 
 ```
-docker-compose -f /root/homelab/lxc/224-unifi/unifi-controller.yml up -d
+docker-compose -f /root/homelab/lxc/224-unifi/docker-compose.yml up -d
 ```
 
 ## Maintenance
