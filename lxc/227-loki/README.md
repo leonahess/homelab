@@ -1,9 +1,9 @@
 ## Service config
 
 ```
-     ip:  192.168.66.222
+     ip:  192.168.66.227
    port:  3100
- domain:  leona.leona.pink
+ domain:  loki.leona.pink
 ```
 
 ## LXC Setup
