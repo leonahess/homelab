@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  plex:
+    image: plexinc/pms-docker:latest
+    restart: unless-stopped
+    container_name: PlexMediaServer
+    network_mode: "host"
+    volumes:
+#      - /mnt/nextcloud:/data/nextcloud
+      - /mnt/bind/media:/data
+      - /mnt/appdata/plexmediaserver:/config
+#      - /mnt/plex-transcode:/transcode
+    env_file:
+      - .env
+
+  promtail:
+    image: grafana/promtail:2.4.2
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - /root/homelab/lxc/211-plex/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml -config.expand-env
+    restart: unless-stopped

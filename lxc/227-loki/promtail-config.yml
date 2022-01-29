@@ -15,7 +15,7 @@ scrape_configs:
       - localhost
     labels:
       host: 192.168.66.227
-      hostname: loki
+      hostname: loki.leona.pink
       job: varlogs
       __path__: /var/log/*log
 
@@ -24,6 +24,8 @@ scrape_configs:
   - targets:
       - localhost
     labels:
+      host: 192.168.66.227
+      hostname: loki.leona.pink
       job: containerlogs
       __path__: /var/lib/docker/containers/*/*log
 
@@ -44,8 +46,6 @@ scrape_configs:
       format: RFC3339Nano
       source: time
   - labels:
-      host: 192.168.66.227
-      hostname: loki
       tag:
       stream:
       image_name:

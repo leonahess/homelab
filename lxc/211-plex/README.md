@@ -26,6 +26,25 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### Set json logging in docker
+Add the following to `/etc/docker/daemon.json`
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3",
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  }
+}
+```
+
+### Restart docker
+
+```
+systemctl restart docker
+```
+
 ### mount required shares into the lxc
 
 ```
@@ -62,7 +81,7 @@ PLEX_GID=100
 ### start service
 
 ```
-docker-compose -f /root/homelab/lxc/211-plex/plex.yml up -d
+docker-compose -f /root/homelab/lxc/211-plex/docker-compose.yml up -d
 ```
 
 ## Maintenance
