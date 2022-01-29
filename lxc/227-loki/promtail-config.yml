@@ -14,6 +14,8 @@ scrape_configs:
   - targets:
       - localhost
     labels:
+      host: 192.168.66.227
+      hostname: loki
       job: varlogs
       __path__: /var/log/*log
 
@@ -42,6 +44,8 @@ scrape_configs:
       format: RFC3339Nano
       source: time
   - labels:
+      host: 192.168.66.227
+      hostname: loki
       tag:
       stream:
       image_name:
