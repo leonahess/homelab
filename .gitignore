@@ -1,4 +1,8 @@
 .idea
 .env
+.upass
+pve.yml
+ipmi_remote.yml
+bucket_config.yml
 __pycache__
 venv
