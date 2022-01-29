@@ -27,6 +27,25 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### Set json logging in docker
+Add the following to `/etc/docker/daemon.json`
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3",
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  }
+}
+```
+
+### Restart docker
+
+```
+systemctl restart docker
+```
+
 ### mount required shares into the lxc
 
 ```
@@ -54,7 +73,7 @@ mkdir -p /mnt/appdata/audiobookshelf/config
 ### start service
 
 ```
-docker-compose -f /root/homelab/lxc/215-audiobookshelf/audiobook.yml up -d
+docker-compose -f /root/homelab/lxc/215-audiobookshelf/docker-compose.yml up -d
 ```
 
 ## Maintenance

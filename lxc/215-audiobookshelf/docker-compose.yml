@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  audiobookshelf:
+    image: advplyr/audiobookshelf
+    container_name: audiobookshelf
+    ports:
+      - 80:80
+    volumes:
+      - /mnt/bind/media:/audiobooks
+      - /mnt/appdata/audiobookshelf/metadata:/metadata
+      - /mnt/appdata/audiobookshelf/config:/config
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:2.4.2
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - /root/homelab/lxc/215-audiobookshelf/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml -config.expand-env
+    restart: unless-stopped
