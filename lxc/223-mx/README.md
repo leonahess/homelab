@@ -28,6 +28,25 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### Set json logging in docker
+Add the following to `/etc/docker/daemon.json`
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3",
+    "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  }
+}
+```
+
+### Restart docker
+
+```
+systemctl restart docker
+```
+
 
 ## Service Setup
 
@@ -58,7 +77,7 @@ docker run --rm -it -v /mnt/appdata/protonmail-bridge:/root shenxn/protonmail-br
 ### start service
 
 ```
-docker-compose -f /root/homelab/lxc/223-mx/protonmail-bridge.yml up -d
+docker-compose -f /root/homelab/lxc/223-mx/docker-compose.yml up -d
 ```
 
 ## Maintenance
