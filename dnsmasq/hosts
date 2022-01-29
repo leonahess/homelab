@@ -34,6 +34,6 @@ ff02::2		ip6-allrouters
 192.168.66.226  prometheus
 192.168.66.227  loki
 
-192.168.66.201  s3.leona.pink
-192.168.66.202  s3.leona.pink
-192.168.66.203  s3.leona.pink
+192.168.66.201  *.s3.leona.pink
+192.168.66.202  *.s3.leona.pink
+192.168.66.203  *.s3.leona.pink
