@@ -5,7 +5,10 @@ ff02::2		ip6-allrouters
 
 192.168.66.1    fritzbox
 192.168.66.2	  dns
+
 192.168.66.3    wireguard
+
+192.168.66.127  filer
 
 192.168.66.130  enviro1
 192.168.66.131  enviro2
