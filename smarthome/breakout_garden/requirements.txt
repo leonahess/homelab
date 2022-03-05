@@ -2,3 +2,5 @@ bme680
 prometheus-client
 dotenv
 pimoroni-sgp30
+veml6075
+smbus2
