@@ -85,7 +85,7 @@ if sgp30_sensor == "1":
     logging.info("Warming up sensor...")
     sgp30.start_measurement()
 
-logging.info("SCD41 connected: %s" % sgp30_sensor)
+logging.info("SCD41 connected: %s" % scd41_sensor)
 if scd41_sensor == "1":
     logging.info("Initializing SCD41 sensor")
     scd41 = SCD4X(quiet=False)
@@ -156,7 +156,7 @@ def process_request():
         tvoc.labels(location=SGP_LOCATION, room=ROOM).set(int(res.total_voc))
 
     if scd41_sensor == "1":
-        scd41.set_ambient_pressure(pres)
+        scd41.set_ambient_pressure(int(pres))
         co2_mes, temperature, relative_humidity, timestamp = scd41.measure()
         temp.labels(location=SCD41_LOCATION, room=ROOM).set(float(temperature))
         hum.labels(location=SCD41_LOCATION, room=ROOM).set(float(relative_humidity))
