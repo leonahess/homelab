@@ -4,3 +4,4 @@ dotenv
 pimoroni-sgp30
 veml6075
 smbus2
+scd4x

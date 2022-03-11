@@ -9,7 +9,7 @@ import smbus2
 from dotenv import Dotenv
 from prometheus_client import start_http_server, Summary, Gauge
 from sgp30 import SGP30
-
+from scd4x import SCD4X
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -26,11 +26,7 @@ sgp30_sensor = os.getenv("SGP30_SENSOR", "0")
 VEML6075_sensor = os.getenv("VEML6075_SENSOR", "0")
 bme688_sensor_primary = os.getenv("BME688_SENSOR_PRIMARY", "0")
 bme688_sensor_secondary = os.getenv("BME688_SENSOR_SECONDARY", "0")
-
-sgp30_sensor_location = os.getenv("SGP30_SENSOR_TAG_LOCATION", "default")
-VEML6075_sensor_location = os.getenv("VEML6075_SENSOR_TAG_LOCATION", "default")
-bme688_sensor_primary_location = os.getenv("BME688_SENSOR_PRIMARY_TAG_LOCATION", "default")
-bme688_sensor_secondary_location = os.getenv("BME688_SENSOR_SECONDARY_TAG_LOCATION", "default")
+scd41_sensor = os.getenv("SCD41_SENSOR", "0")
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -89,6 +85,14 @@ if sgp30_sensor == "1":
     logging.info("Warming up sensor...")
     sgp30.start_measurement()
 
+logging.info("SCD41 connected: %s" % sgp30_sensor)
+if scd41_sensor == "1":
+    logging.info("Initializing SCD41 sensor")
+    device = SCD4X(quiet=False)
+
+    logging.info("Warming up sensor...")
+    device.start_periodic_measurement()
+
 ########################################################################################################################
 #                                                                                                                      #
 # Stuff                                                                                                                #
@@ -99,6 +103,7 @@ LOCATION1 = os.getenv("BME688_SENSOR_PRIMARY_TAG_LOCATION", "default")
 LOCATION2 = os.getenv("BME688_SENSOR_SECONDARY_TAG_LOCATION", "default")
 SGP_LOCATION = os.getenv("SGP30_SENSOR_TAG_LOCATION", "default")
 VEML6075_LOCATION = os.getenv("VEML6075_SENSOR_TAG_LOCATION", "default")
+SCD41_LOCATION = os.getenv("SCD41_SENSOR_TAG_LOCATION", "default")
 ROOM = os.getenv("ROOM", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
@@ -111,6 +116,8 @@ tvoc = Gauge('smarthome_tvoc_ppb', 'TVOC concentration in ppb, provided by the s
 uva_ind = Gauge('smarthome_uva_index', 'UVA Index, provided by the VEML6075 sensor', ['location', 'room'])
 uvb_ind = Gauge('smarthome_uvb_index', 'UVB Index, provided by the VEML6075 sensor', ['location', 'room'])
 uvavg_ind = Gauge('smarthome_avg_uv_index', 'Average UV Index, provided by the VEML6075 sensor', ['location', 'room'])
+co2 = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the SCD41 sensor', ['location', 'room'])
+
 
 @REQUEST_TIME.time()
 def process_request():
@@ -138,6 +145,12 @@ def process_request():
         res = sgp30.get_air_quality()
         eco2.labels(location=SGP_LOCATION, room=ROOM).set(int(res.equivalent_co2))
         tvoc.labels(location=SGP_LOCATION, room=ROOM).set(int(res.total_voc))
+
+    if scd41_sensor == "1":
+        co2_mes, temperature, relative_humidity, timestamp = device.measure()
+        temp.labels(location=SCD41_LOCATION, room=ROOM).set(float(temperature))
+        hum.labels(location=SCD41_LOCATION, room=ROOM).set(float(relative_humidity))
+        co2.labels(location=SCD41_LOCATION, room=ROOM).set(float(co2_mes))
 
 
 logging.info("Starting main loop")

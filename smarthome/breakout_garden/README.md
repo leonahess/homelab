@@ -1,9 +1,11 @@
-# Script to read two various sensors from Pimoroni's breakout garden kit sensors and write to InfluxDB
+# Script to read various sensors from Pimoroni's breakout garden kit sensors and expose prometheus exporter
 
 
 - https://github.com/pimoroni/bme680-python
 - https://github.com/pimoroni/sgp30-python
-- https://docs.influxdata.com/influxdb/v2.0/api-guide/client-libraries/python/
+- https://github.com/pimoroni/scd4x-python
+- https://github.com/pimoroni/veml6075-python
+- https://github.com/prometheus/client_python
 
 ## Setup the Pi
 
@@ -28,6 +30,7 @@ SGP30_SENSOR=0
 VEML6075_SENSOR=0
 BME688_SENSOR_PRIMARY=0
 BME688_SENSOR_SECONDARY=0
+SCD41_SENSOR=0
 
 SGP30_SENSOR_TAG_LOCATION=leona_desk
 VEML6075_SENSOR_TAG_LOCATION=leona_desk
