@@ -88,10 +88,14 @@ if sgp30_sensor == "1":
 logging.info("SCD41 connected: %s" % sgp30_sensor)
 if scd41_sensor == "1":
     logging.info("Initializing SCD41 sensor")
-    device = SCD4X(quiet=False)
+    scd41 = SCD4X(quiet=False)
+
+    logging.info("Get temperature offset")
+    offset = scd41.get_temperature_offset
+    logging.info(f"Temperature Offset: {offset} celsius")
 
     logging.info("Warming up sensor...")
-    device.start_periodic_measurement()
+    scd41.start_periodic_measurement()
 
 ########################################################################################################################
 #                                                                                                                      #
@@ -121,10 +125,15 @@ co2 = Gauge('smarthome_co2_ppm', 'CO2 concentration in ppm, provided by the SCD4
 
 @REQUEST_TIME.time()
 def process_request():
+
+    pres = 0
+
     if bme688_sensor_primary == "1":
         if sensor1.get_sensor_data():
+            pres_sen1 = sensor1.data.pressure
+            pres = pres_sen1
             temp.labels(location=LOCATION1, room=ROOM).set(float(sensor1.data.temperature))
-            pressure.labels(location=LOCATION1, room=ROOM).set(float(sensor1.data.pressure))
+            pressure.labels(location=LOCATION1, room=ROOM).set(float(pres_sen1))
             hum.labels(location=LOCATION1, room=ROOM).set(float(sensor1.data.humidity))
 
     if bme688_sensor_secondary == "1":
@@ -147,7 +156,8 @@ def process_request():
         tvoc.labels(location=SGP_LOCATION, room=ROOM).set(int(res.total_voc))
 
     if scd41_sensor == "1":
-        co2_mes, temperature, relative_humidity, timestamp = device.measure()
+        scd41.set_ambient_pressure(pres)
+        co2_mes, temperature, relative_humidity, timestamp = scd41.measure()
         temp.labels(location=SCD41_LOCATION, room=ROOM).set(float(temperature))
         hum.labels(location=SCD41_LOCATION, room=ROOM).set(float(relative_humidity))
         co2.labels(location=SCD41_LOCATION, room=ROOM).set(float(co2_mes))
