@@ -156,7 +156,8 @@ def process_request():
         tvoc.labels(location=SGP_LOCATION, room=ROOM).set(int(res.total_voc))
 
     if scd41_sensor == "1":
-        scd41.set_ambient_pressure(int(pres))
+        if pres != 0:
+            scd41.set_ambient_pressure(int(pres))
         co2_mes, temperature, relative_humidity, timestamp = scd41.measure()
         temp.labels(location=SCD41_LOCATION, room=ROOM).set(float(temperature))
         hum.labels(location=SCD41_LOCATION, room=ROOM).set(float(relative_humidity))
