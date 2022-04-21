@@ -19,9 +19,9 @@ spec:
           image: linuxserver/mariadb
           env:
             - name: PUID
-              value: 99
+              value: "99"
             - name: PGID
-              value: 100
+              value: "100"
             - name: TZ
               value: Europe/Berlin
             - name: MYSQL_DATABASE
