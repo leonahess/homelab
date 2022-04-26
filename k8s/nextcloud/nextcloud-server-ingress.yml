@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nextcloud-server-ingress
+  namespace: service-nextcloud
   annotations:
     kubernetes.io/ingress.class: "traefik"
 spec:
