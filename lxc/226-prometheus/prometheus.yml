@@ -65,6 +65,7 @@ scrape_configs:
         - enviro2.leona.pink:9100
         - breakout1.leona.pink:9100
         - breakout2.leona.pink:9100
+        - breakout3.leona.pink:9100
 
   - job_name: 'enviro'
     scrape_interval: 1s
@@ -79,6 +80,7 @@ scrape_configs:
       - targets:
         - breakout1.leona.pink:8003
         - breakout2.leona.pink:8003
+        - breakout3.leona.pink:8003
 
   - job_name: 'scd30'
     scrape_interval: 1s

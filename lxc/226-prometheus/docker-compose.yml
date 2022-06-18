@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   prometheus:
-    image: prom/prometheus:v2.30.3
+    image: prom/prometheus:v2.36.1
     container_name: prometheus
     volumes:
       - /root/homelab/lxc/226-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
