@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud-server
+  namespace: service-nextcloud
+  labels:
+    app: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod-label: nextcloud-server-pod
+  template:
+    metadata:
+      labels:
+        pod-label: nextcloud-server-pod
+    spec:
+      containers:
+        - name: nextcloud
+          image: linuxserver/nextcloud
+          volumeMounts:
+            - name: data-storage
+              mountPath: /data
+            - name: config-storage
+              mountPath: /config
+            - name: php-config
+              mountPath: /config/www/nextcloud/config/config.php
+              subPath: config.php
+            - name: nginx-config
+              mountPath: /config/nginx/site-confs/default
+              subPath: default
+
+      volumes:
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: nextcloud-server-data-storage-claim
+        - name: config-storage
+          persistentVolumeClaim:
+            claimName: nextcloud-server-config-storage-claim
+        - name: php-config
+          configMap:
+            name: nextcloud-server-php-config
+        - name: nginx-config
+          configMap:
+            name: nextcloud-server-nginx-config
