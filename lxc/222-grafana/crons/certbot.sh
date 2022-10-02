@@ -13,4 +13,4 @@ cp /etc/letsencrypt/live/grafana.leona.pink/privkey.pem /mnt/appdata/grafana/pri
 chown 472 /mnt/appdata/grafana/fullchain.pem
 chown 472 /mnt/appdata/grafana/privkey.pem
 
-docker-compose -f /root/homelab/lxc/222-grafana/grafana.yml up -d
+docker-compose -f /root/homelab/lxc/222-grafana/docker-compose.yml up -d
