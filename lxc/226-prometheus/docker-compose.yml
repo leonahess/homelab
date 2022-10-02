@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   prometheus:
-    image: prom/prometheus:v2.36.1
+    image: prom/prometheus:v2.38.0
     container_name: prometheus
     volumes:
       - /root/homelab/lxc/226-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -125,13 +125,13 @@ services:
 #      - 9290:9290                           # bind on 0.0.0.0
 #      # - 127.0.0.1:9290:9290               # or bind to specific interface
 #    container_name: ipmi_exporter
-
-  promtail:
-    image: grafana/promtail:2.4.2
-    container_name: promtail
-    volumes:
-      - /var/log:/var/log
-      - /var/lib/docker/containers:/var/lib/docker/containers
-      - /root/homelab/lxc/226-prometheus/promtail-config.yml:/etc/promtail/config.yml
-    command: -config.file=/etc/promtail/config.yml -config.expand-env
-    restart: unless-stopped
+#
+#  promtail:
+#   image: grafana/promtail:2.4.2
+#   container_name: promtail
+#   volumes:
+#     - /var/log:/var/log
+#     - /var/lib/docker/containers:/var/lib/docker/containers
+#     - /root/homelab/lxc/226-prometheus/promtail-config.yml:/etc/promtail/config.yml
+#   command: -config.file=/etc/promtail/config.yml -config.expand-env
+#   restart: unless-stopped

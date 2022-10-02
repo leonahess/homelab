@@ -36,23 +36,23 @@ scrape_configs:
     static_configs:
          - targets: ['localhost:9090']
 
-  - job_name: 'pve'
-    scrape_interval: 5s
-    static_configs:
-      - targets:
-        - tinyprox1.leona.pink
-        - tinyprox2.leona.pink
-        - tinyprox3.leona.pink
-    metrics_path: /pve
-    params:
-      module: [default]
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: pve_exporter:9221  # PVE exporter.
+#  - job_name: 'pve'
+#    scrape_interval: 5s
+#    static_configs:
+#      - targets:
+#        - tinyprox1.leona.pink
+#        - tinyprox2.leona.pink
+#        - tinyprox3.leona.pink
+#    metrics_path: /pve
+#    params:
+#      module: [default]
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        target_label: __param_target
+#      - source_labels: [__param_target]
+#        target_label: instance
+#      - target_label: __address__
+#        replacement: pve_exporter:9221  # PVE exporter.
 
   - job_name: 'nodes'
     scrape_interval: 5s
@@ -63,6 +63,7 @@ scrape_configs:
         - tinyprox3.leona.pink:9100
         - enviro1.leona.pink:9100
         - enviro2.leona.pink:9100
+        - enviro3.leona.pink:9100
         - breakout1.leona.pink:9100
         - breakout2.leona.pink:9100
         - breakout3.leona.pink:9100
@@ -71,7 +72,7 @@ scrape_configs:
     scrape_interval: 1s
     static_configs:
       - targets:
-        - enviro1.leona.pink:8000
+        - enviro3.leona.pink:8000
         - enviro2.leona.pink:8000
 
   - job_name: 'breakout'
