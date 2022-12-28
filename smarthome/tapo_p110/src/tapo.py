@@ -44,7 +44,7 @@ DEVICE = os.getenv("DEVICE", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-power = Gauge('smarthome_power_milliwat', 'Power in milliwat provided by the plug', ['location', 'room', 'device'])
+power = Gauge('smarthome_power_milliwatt', 'Power in milliwatt provided by the plug', ['location', 'room', 'device'])
 
 
 @REQUEST_TIME.time()
