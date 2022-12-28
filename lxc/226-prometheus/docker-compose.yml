@@ -43,7 +43,7 @@ services:
     container_name: pve_exporter
     volumes:
       - /root/homelab/lxc/226-prometheus/pve.yml:/etc/pve.yml
-    ports: 
+    ports:
      - 9221:9221
     restart: unless-stopped
 
@@ -55,6 +55,37 @@ services:
       - 9130:9130
     env_file:
       - .env
+
+  tapo-1:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-1.env
+    container_name: tapo-1
+    restart: unless-stopped
+
+
+  tapo-2:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-2.env
+    container_name: tapo-2
+    restart: unless-stopped
+
+
+  tapo-3:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-3.env
+    container_name: tapo-3
+    restart: unless-stopped
+
+
+  tapo-4:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-4.env
+    container_name: tapo-4
+    restart: unless-stopped
 
 #  thanos_store_gateway:
 #    container_name: thanos_store_gateway

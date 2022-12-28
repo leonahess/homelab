@@ -1,0 +1,3 @@
+PyP100
+prometheus-client
+dotenv

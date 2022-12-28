@@ -6,3 +6,4 @@ ipmi_remote.yml
 bucket_config.yml
 __pycache__
 venv
+.fleet
