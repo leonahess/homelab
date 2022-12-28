@@ -28,6 +28,16 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### if zfs as storage do this: https://c-goes.github.io/posts/proxmox-lxc-docker-fuse-overlayfs/
+
+1. download latest release: https://github.com/containers/fuse-overlayfs/releases
+2. move the binary
+```
+mv fuse-overlayfs-x86_64 /usr/local/bin/fuse-overlayfs
+chmod +x /usr/local/bin/fuse-overlayfs
+```
+3. set `/etc/docker/daemon.json` (see below)
+
 ### Set json logging in docker
 Add the following to `/etc/docker/daemon.json`
 ```
@@ -37,7 +47,8 @@ Add the following to `/etc/docker/daemon.json`
     "max-size": "10m",
     "max-file": "3",
     "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
-  }
+  },
+  "storage-driver": "fuse-overlayfs"
 }
 ```
 

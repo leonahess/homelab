@@ -27,6 +27,16 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
 
+### if zfs as storage do this: https://c-goes.github.io/posts/proxmox-lxc-docker-fuse-overlayfs/
+
+1. download latest release: https://github.com/containers/fuse-overlayfs/releases
+2. move the binary
+```
+mv fuse-overlayfs-x86_64 /usr/local/bin/fuse-overlayfs
+chmod +x /usr/local/bin/fuse-overlayfs
+```
+3. set `/etc/docker/daemon.json` (see below)
+
 ### Set json logging in docker
 Add the following to `/etc/docker/daemon.json`
 ```
@@ -36,7 +46,8 @@ Add the following to `/etc/docker/daemon.json`
     "max-size": "10m",
     "max-file": "3",
     "tag": "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
-  }
+  },
+  "storage-driver": "fuse-overlayfs"
 }
 ```
 
@@ -79,7 +90,7 @@ docker-compose -f /root/homelab/lxc/222-grafana/docker-compose.yml up -d
 
 ## Maintenance
 
-You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file. Unfortunately Grafana doesn't have a general version tag like `8.0` to get all minor version updates to version 8.0, 
+You can setup some cronjobs to keep the lxc up to date. For that install the cronjob found in the crontab file. Unfortunately Grafana doesn't have a general version tag like `8.0` to get all minor version updates to version 8.0,
 so updates to the service need to be done manually.
 
 ## SSL Certs
