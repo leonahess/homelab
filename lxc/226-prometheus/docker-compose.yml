@@ -62,6 +62,8 @@ services:
     env_file: .tapo-1.env
     container_name: tapo-1
     restart: unless-stopped
+    ports:
+      - 8000:8000
 
 
   tapo-2:
@@ -70,6 +72,8 @@ services:
     env_file: .tapo-2.env
     container_name: tapo-2
     restart: unless-stopped
+    ports:
+      - 8001:8000
 
 
   tapo-3:
@@ -78,6 +82,8 @@ services:
     env_file: .tapo-3.env
     container_name: tapo-3
     restart: unless-stopped
+    ports:
+      - 8002:8000
 
 
   tapo-4:
@@ -86,6 +92,8 @@ services:
     env_file: .tapo-4.env
     container_name: tapo-4
     restart: unless-stopped
+    ports:
+      - 8003:8000
 
 #  thanos_store_gateway:
 #    container_name: thanos_store_gateway

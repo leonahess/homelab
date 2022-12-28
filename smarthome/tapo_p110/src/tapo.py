@@ -40,6 +40,7 @@ p110.login() #Sends credentials to the plug and creates AES Key and IV for furth
 
 LOCATION = os.getenv("LOCATION", "default")
 ROOM = os.getenv("ROOM", "default")
+DEVICE = os.getenv("DEVICE", "default")
 
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
@@ -49,8 +50,9 @@ power = Gauge('smarthome_power_milliwat', 'Power in milliwat provided by the plu
 @REQUEST_TIME.time()
 def process_request():
   response = p110.getEnergyUsage()
-  logging.info(response)
+  logging.debug(response)
 
+  power.labels(location=LOCATION, room=ROOM, device=DEVICE).set(response["result"]["current_power"])
 
 if __name__ == '__main__':
     start_http_server(8000)
