@@ -73,9 +73,9 @@ scrape_configs:
     static_configs:
       - targets:
         - tapo-1:8000
-        - tapo-2:8001
-        - tapo-3:8002
-        - tapo-4:8003
+        - tapo-2:8000
+        - tapo-3:8000
+        - tapo-4:8000
 
   - job_name: 'enviro'
     scrape_interval: 1s
