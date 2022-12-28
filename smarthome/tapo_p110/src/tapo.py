@@ -45,7 +45,10 @@ DEVICE = os.getenv("DEVICE", "default")
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
 power = Gauge('smarthome_power_milliwatt', 'Power in milliwatt provided by the plug', ['location', 'room', 'device'])
-
+energy_today = Gauge('smarthome_energy_today_watthours', 'Todays energy in watthours provided by the plug', ['location', 'room', 'device'])
+energy_month = Gauge('smarthome_energy_month_watthours', 'This months energy in watthours provided by the plug', ['location', 'room', 'device'])
+runtime_today = Gauge('smarthome_runtime_today_minutes', 'Todays runtime in minutes provided by the plug', ['location', 'room', 'device'])
+runtime_month = Gauge('smarthome_runtime_month_minutes', 'Todays runtime in minutes provided by the plug', ['location', 'room', 'device'])
 
 @REQUEST_TIME.time()
 def process_request():
@@ -53,6 +56,10 @@ def process_request():
   logging.debug(response)
 
   power.labels(location=LOCATION, room=ROOM, device=DEVICE).set(response["result"]["current_power"])
+  energy_today.labels(location=LOCATION, room=ROOM, device=DEVICE).set(response["result"]["today_energy"])
+  energy_month.labels(location=LOCATION, room=ROOM, device=DEVICE).set(response["result"]["month_energy"])
+  runtime_today.labels(location=LOCATION, room=ROOM, device=DEVICE).set(response["result"]["today_runtime"])
+  runtime_month.labels(location=LOCATION, room=ROOM, device=DEVICE).set(response["result"]["month_runtime"])
 
 if __name__ == '__main__':
     start_http_server(8000)
