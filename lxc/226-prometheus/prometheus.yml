@@ -76,6 +76,10 @@ scrape_configs:
         - tapo-2:8000
         - tapo-3:8000
         - tapo-4:8000
+        - tapo-5:8000
+        - tapo-6:8000
+        - tapo-7:8000
+        - tapo-8:8000
 
   - job_name: 'enviro'
     scrape_interval: 1s
