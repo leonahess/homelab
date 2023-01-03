@@ -19,9 +19,13 @@ ff02::2		ip6-allrouters
 192.168.66.135  breakout3
 
 192.168.66.136 tapo1 rechner
-192.168.66.137 tapo2 beamerecke
+192.168.66.137 tapo2 receiver
 192.168.66.138 tapo3 rack
 192.168.66.139 tapo4 pflanzen
+192.168.66.140 tapo5
+192.168.66.141 tapo6 spiegel
+192.168.66.142 tapo7
+192.168.66.143 tapo8 beamer
 
 192.168.66.200  fx8350
 192.168.66.201  tinyprox1
