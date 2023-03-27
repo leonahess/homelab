@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   prometheus:
-    image: prom/prometheus:v2.38.0
+    image: prom/prometheus:v2.43.0
     container_name: prometheus
     volumes:
       - /root/homelab/lxc/226-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -94,6 +94,78 @@ services:
     restart: unless-stopped
     ports:
       - 8003:8000
+
+  tapo-5:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-5.env
+    container_name: tapo-5
+    restart: unless-stopped
+    ports:
+      - 8004:8000
+
+  tapo-6:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-6.env
+    container_name: tapo-6
+    restart: unless-stopped
+    ports:
+      - 8005:8000
+
+  tapo-7:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-7.env
+    container_name: tapo-7
+    restart: unless-stopped
+    ports:
+      - 8006:8000
+
+  tapo-8:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-8.env
+    container_name: tapo-8
+    restart: unless-stopped
+    ports:
+      - 8007:8000
+
+  tapo-9:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-9.env
+    container_name: tapo-9
+    restart: unless-stopped
+    ports:
+      - 8008:8000
+
+  tapo-10:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-10.env
+    container_name: tapo-10
+    restart: unless-stopped
+    ports:
+      - 8009:8000
+
+  tapo-11:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-11.env
+    container_name: tapo-11
+    restart: unless-stopped
+    ports:
+      - 8010:8000
+
+  tapo-12:
+    build: ../../smarthome/tapo_p110
+    image: tapo_p110:latest
+    env_file: .tapo-12.env
+    container_name: tapo-12
+    restart: unless-stopped
+    ports:
+      - 8011:8000
 
 #  thanos_store_gateway:
 #    container_name: thanos_store_gateway

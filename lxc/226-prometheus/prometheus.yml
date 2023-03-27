@@ -58,6 +58,7 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets:
+        - dns.leona.pink:9100
         - tinyprox1.leona.pink:9100
         - tinyprox2.leona.pink:9100
         - tinyprox3.leona.pink:9100
@@ -80,6 +81,10 @@ scrape_configs:
         - tapo-6:8000
         - tapo-7:8000
         - tapo-8:8000
+        - tapo-9:8000
+        - tapo-10:8000
+        - tapo-11:8000
+        - tapo-12:8000
 
   - job_name: 'enviro'
     scrape_interval: 1s
