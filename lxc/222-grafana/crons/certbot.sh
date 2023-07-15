@@ -2,7 +2,7 @@
 
 certbot certonly --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/cloudflare.ini -d grafana.leona.pink
 
-docker-compose -f /root/homelab/lxc/222-grafana/grafana.yml down
+docker-compose -f /root/homelab/lxc/222-grafana/docker-compose.yml down
 
 rm /mnt/appdata/grafana/fullchain.pem
 rm /mnt/appdata/grafana/privkey.pem
