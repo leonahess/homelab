@@ -1,0 +1,35 @@
+{{ define "__text_alert_list" }}{{ range . }}
+---
+🪪 <b>{{ .Labels.alertname }}</b>
+{{- if .Annotations.summary }}
+📝 {{ .Annotations.summary }}{{ end }}
+{{- if .Annotations.description }}
+📖 {{ .Annotations.description }}{{ end }}
+🏷 Labels:
+{{ range .Labels.SortedPairs }}  <i>{{ .Name }}</i>: <code>{{ .Value }}</code>
+{{ end }}{{ end }}
+🛠 <a href="https://grafana.leona.pink/">Grafana</a> 💊 <a href="http://prometheus.leona.pink:9093/">Alertmanager</a> 💊 <a href="http://prometheus.leona.pink:9090/">Prometheus</a> 🛠
+{{ end }}
+
+{{ define "telegram.warning.message" }}
+{{ if gt (len .Alerts.Firing) 0 }}
+🟡 WARNING Alert Firing 🟡
+{{ template "__text_alert_list" .Alerts.Firing }}
+{{ end }}
+{{ if gt (len .Alerts.Resolved) 0 }}
+🟢 Alerts Resolved 🟢
+{{ template "__text_alert_list" .Alerts.Resolved }}
+{{ end }}
+{{ end }}
+
+
+{{ define "telegram.warning.message" }}
+{{ if gt (len .Alerts.Firing) 0 }}
+🔴 CRITICAL Alert Firing 🔴
+{{ template "__text_alert_list" .Alerts.Firing }}
+{{ end }}
+{{ if gt (len .Alerts.Resolved) 0 }}
+🟢 Alerts Resolved 🟢
+{{ template "__text_alert_list" .Alerts.Resolved }}
+{{ end }}
+{{ end }}

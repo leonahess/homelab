@@ -11,6 +11,7 @@ groups:
     for: 5m
     labels:
       severity: warning
+      namespace: homelab
     annotations:
       summary: "High Memory Usage on IOT Node: {{ label.instance }}"
 
@@ -19,6 +20,7 @@ groups:
     for: 1m
     labels:
       severity: critical
+      namespace: homelab
     annotations:
       summary: "Critical Memory Usage on IOT Node: {{ label.instance }}"
 
@@ -27,6 +29,7 @@ groups:
     for: 5m
     labels:
       severity: warning
+      namespace: homelab
     annotations:
       summary: "High RootFS usage on IOT Node: {{ label.instance }}"
 
@@ -35,6 +38,7 @@ groups:
     for: 1m
     labels:
       severity: critical
+      namespace: homelab
     annotations:
       summary: "Critical RootFS usage on IOT Node: {{ label.instance }}"
 
@@ -49,6 +53,7 @@ groups:
     for: 5m
     labels:
       severity: warning
+      namespace: homelab
     annotations:
       summary: "High Memory Usage on service Node: {{ label.instance }}"
 
@@ -57,6 +62,7 @@ groups:
     for: 1m
     labels:
       severity: critical
+      namespace: homelab
     annotations:
       summary: "Critical Memory Usage on service Node: {{ label.instance }}"
 
@@ -65,6 +71,7 @@ groups:
     for: 5m
     labels:
       severity: warning
+      namespace: homelab
     annotations:
       summary: "High RootFS usage on service Node: {{ label.instance }}"
 
@@ -73,6 +80,7 @@ groups:
     for: 1m
     labels:
       severity: critical
+      namespace: homelab
     annotations:
       summary: "Critical RootFS usage on service Node: {{ label.instance }}"
 
@@ -88,6 +96,7 @@ groups:
     for: 10m
     labels:
       severity: critical
+      namespace: homelab
     annotations:
       summary: "Service {{ $labels.instance }} down"
 
@@ -103,6 +112,7 @@ groups:
     for: 2m
     labels:
       severity: info
+      namespace: homelab
     annotations:
       summary: "Target {{ $labels.instance }} down"
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
@@ -118,6 +128,7 @@ groups:
     for: 10m
     labels:
       severity: warning
+      namespace: smarthome
     annotations:
       summary: "High CO2 in Room: {{ $labels.room }}"
       description: "Plox lüften"
@@ -127,6 +138,7 @@ groups:
     for: 10m
     labels:
       severity: critical
+      namespace: smarthome
     annotations:
       summary: "Critical CO2 in Room: {{ $labels.room }}"
       description: "Plox lüften"
@@ -136,6 +148,7 @@ groups:
     for: 6h
     labels:
       severity: warning
+      namespace: smarthome
     annotations:
       summary: "High Humidity in Room: {{ $labels.room }}"
 
@@ -144,6 +157,7 @@ groups:
     for: 6h
     labels:
       severity: critical
+      namespace: smarthome
     annotations:
       summary: "Critical Humidity in Room: {{ $labels.room }}"
 
@@ -152,6 +166,7 @@ groups:
     for: 5m
     labels:
       severity: warning
+      namespace: smarthome
     annotations:
       summary: "High Particulate Matter in Room: {{ $labels.room }}"
 
@@ -160,5 +175,6 @@ groups:
     for: 5m
     labels:
       severity: critical
+      namespace: smarthome
     annotations:
       summary: "Critical Particulate Matter in Room: {{ $labels.room }}"

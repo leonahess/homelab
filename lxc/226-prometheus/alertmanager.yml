@@ -1,12 +1,58 @@
+templates:
+  - '/etc/alertmanager/template/*.tmpl'
+
 route:
-  - matchers:
-      - severity=~"info|critical"
-    receiver: telegram
+
+  group_by: ['alertname']
+
+  group_wait: 30s
+
+  group_interval: 5m
+
+  repeat_interval: 12h
+
+  receiver: telegram_homelab_warning
+
+  routes:
+
+    - matchers:
+        - namespace=="homelab"
+      receiver: telegram_homelab_warning
+      routes:
+        - matchers:
+            - severity=="warning"
+        - matchers:
+            - severity=="critical"
+          receiver: telegram_homelab_critical
+
+    - matchers:
+        - namespace=="smarthome"
+      receiver: telegram_smarthome_warning
+      routes:
+        - matchers:
+            - severity=="warning"
+        - matchers:
+            - severity=="critical"
+          receiver: telegram_smarthome_critical
 
 receivers:
-  - name: 'telegram'
+  - name: 'telegram_homelab_warning'
     telegram_configs:
       - bot_token:
-        api_url: https://api.telegram.org
         chat_id:
-        parse_mode: ''
+        message: '{{ template "telegram.warning.message" . }}'
+  - name: 'telegram_homelab_critical'
+    telegram_configs:
+      - bot_token:
+        chat_id:
+        message: '{{ template "telegram.critical.message" . }}'
+  - name: 'telegram_smarthome_warning'
+    telegram_configs:
+      - bot_token:
+        chat_id:
+        message: '{{ template "telegram.warning.message" . }}'
+  - name: 'telegram_smarthome_critical'
+    telegram_configs:
+      - bot_token:
+        chat_id:
+        message: '{{ template "telegram.critical.message" . }}'

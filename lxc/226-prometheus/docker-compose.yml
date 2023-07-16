@@ -33,6 +33,7 @@ services:
       - 9093:9093
     volumes:
       - /root/homelab/lxc/226-prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - /root/homelab/lxc/226-prometheus/telegram_templates.tmpl:/etc/alertmanager/template/telegram_templates.tmpl
     restart: unless-stopped
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
