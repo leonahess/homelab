@@ -59,6 +59,8 @@ scrape_configs:
     static_configs:
       - targets:
         - dns.leona.pink:9100
+        - filer.leona.pink:9100
+        - fx8350.leona.pink:9100
         - tinyprox1.leona.pink:9100
         - tinyprox2.leona.pink:9100
         - tinyprox3.leona.pink:9100
