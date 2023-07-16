@@ -1,5 +1,10 @@
 groups:
 
+
+
+########################################################################################################################
+# TARGETS                                                                                                              #
+########################################################################################################################
 - name: targets
   rules:
 
@@ -13,14 +18,58 @@ groups:
       summary: "Target {{ $labels.instance }} down"
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
 
+########################################################################################################################
+# SMARTHOME                                                                                                            #
+########################################################################################################################
 - name: smarthome
   rules:
 
   - alert: high_co2
-    expr: smarthome_co2_ppm => 400
+    expr: smarthome_co2_ppm > 1500
     for: 10m
     labels:
-    severity: critical
+      severity: warning
     annotations:
       summary: "High CO2 in Room: {{ $labels.room }}"
       description: "Plox lüften"
+
+  - alert: critical_co2
+    expr: smarthome_co2_ppm > 2000
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Critical CO2 in Room: {{ $labels.room }}"
+      description: "Plox lüften"
+
+  - alert: high_humidity
+    expr: smarthome_humidity_percent{room!~"Keller"} > 60
+    for: 6h
+    labels:
+      severity: warning
+    annotation:
+      summary: "High Humidity in Room: {{ $labels.room }}"
+
+  - alert: critical_humidity
+    expr: smarthome_humidity_percent{room!~"Keller"} > 70
+    for: 6h
+    labels:
+      severity: critical
+    annotation:
+      summary: "Critical Humidity in Room: {{ $labels.room }}"
+
+  - alert: high_particles
+    expr: smarthome_particulate_matter_2_5_microgram_per_cubic_meter > 60
+    for: 5m
+    labels:
+      severity: warning
+    annotation:
+      summary: "High Particulate Matter in Room: {{ $labels.room }}"
+
+  - alert: critical_particles
+    expr: smarthome_particulate_matter_2_5_microgram_per_cubic_meter > 120
+    for: 5m
+    labels:
+      severity: critical
+    annotation:
+      summary: "Critical Particulate Matter in Room: {{ $labels.room }}"
