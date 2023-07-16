@@ -1,13 +1,28 @@
 groups:
-- name: example
+- name: services
   rules:
 
+
+
+- name: targets
   # Alert for any instance that is unreachable for >2 minutes.
-  - alert: service_down
+  - alert: target_down
     expr: up == 0
     for: 2m
     labels:
-      severity: page
+      severity: info
     annotations:
-      summary: "Instance {{ $labels.instance }} down"
+      summary: "Target {{ $labels.instance }} down"
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
+
+- name: smarthome
+  rules:
+
+  - alert: high_co2
+    expr: smarthome_co2_ppm => 400
+    for: 10m
+    labels:
+    severity: critical
+    annotations:
+      summary: "High CO2 in Room: {{ $labels.room }}"
+      description: "Plox lüften"

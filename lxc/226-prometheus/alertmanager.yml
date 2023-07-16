@@ -1,0 +1,12 @@
+route:
+  - matchers:
+      - severity=~"info|critical"
+    receiver: telegram
+
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token:
+        api_url: https://api.telegram.org
+        chat_id:
+        parse_mode: ''

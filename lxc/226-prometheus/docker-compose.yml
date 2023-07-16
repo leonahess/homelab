@@ -32,10 +32,10 @@ services:
     ports:
       - 9093:9093
     volumes:
-      - /root/homelab/lxc/226-prometheus/config.yml:/etc/alertmanager/config.yml
+      - /root/homelab/lxc/226-prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     restart: unless-stopped
     command:
-      - '--config.file=/etc/alertmanager/config.yml'
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
 
   blackbox:
