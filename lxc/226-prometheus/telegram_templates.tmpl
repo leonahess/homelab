@@ -23,7 +23,7 @@
 {{ end }}
 
 
-{{ define "telegram.warning.message" }}
+{{ define "telegram.critical.message" }}
 {{ if gt (len .Alerts.Firing) 0 }}
 🔴 CRITICAL Alert Firing 🔴
 {{ template "__text_alert_list" .Alerts.Firing }}
