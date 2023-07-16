@@ -98,7 +98,7 @@ groups:
       severity: critical
       namespace: homelab
     annotations:
-      summary: "Service {{ $labels.instance }} down"
+      summary: "Service {{ $labels.service }} down"
 
 ########################################################################################################################
 # TARGETS                                                                                                              #
