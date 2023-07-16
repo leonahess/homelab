@@ -38,11 +38,21 @@ services:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
 
+  blackbox:
+    image: prom/blackbox-exporter
+    container_name: blackbox-exporter
+    ports:
+      - 9115:9115
+    command:
+      - --config.file=/etc/blackbox/blackbox.yml
+    volumes:
+      - /root/homelab/lxc/226-prometheus/exporter-config/blackbox.yml:/etc/blackbox/blackbox.yml
+
   pve_exporter:
     image: prompve/prometheus-pve-exporter
     container_name: pve_exporter
     volumes:
-      - /root/homelab/lxc/226-prometheus/pve.yml:/etc/pve.yml
+      - /root/homelab/lxc/226-prometheus/exporter-config/pve.yml:/etc/pve.yml
     ports:
      - 9221:9221
     restart: unless-stopped
@@ -54,12 +64,12 @@ services:
     ports:
       - 9130:9130
     env_file:
-      - .env
+      - exporter-config/.unpoller.env
 
   tapo-1:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-1.env
+    env_file: exporter-config/.tapo-1.env
     container_name: tapo-1
     restart: unless-stopped
     ports:
@@ -69,7 +79,7 @@ services:
   tapo-2:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-2.env
+    env_file: exporter-config/.tapo-2.env
     container_name: tapo-2
     restart: unless-stopped
     ports:
@@ -79,7 +89,7 @@ services:
   tapo-3:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-3.env
+    env_file: exporter-config/.tapo-3.env
     container_name: tapo-3
     restart: unless-stopped
     ports:
@@ -89,7 +99,7 @@ services:
   tapo-4:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-4.env
+    env_file: exporter-config/.tapo-4.env
     container_name: tapo-4
     restart: unless-stopped
     ports:
@@ -98,7 +108,7 @@ services:
   tapo-5:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-5.env
+    env_file: exporter-config/.tapo-5.env
     container_name: tapo-5
     restart: unless-stopped
     ports:
@@ -107,7 +117,7 @@ services:
   tapo-6:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-6.env
+    env_file: exporter-config/.tapo-6.env
     container_name: tapo-6
     restart: unless-stopped
     ports:
@@ -116,7 +126,7 @@ services:
   tapo-7:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-7.env
+    env_file: exporter-config/.tapo-7.env
     container_name: tapo-7
     restart: unless-stopped
     ports:
@@ -125,7 +135,7 @@ services:
   tapo-8:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-8.env
+    env_file: exporter-config/.tapo-8.env
     container_name: tapo-8
     restart: unless-stopped
     ports:
@@ -134,7 +144,7 @@ services:
   tapo-9:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-9.env
+    env_file: exporter-config/.tapo-9.env
     container_name: tapo-9
     restart: unless-stopped
     ports:
@@ -143,7 +153,7 @@ services:
   tapo-10:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-10.env
+    env_file: exporter-config/.tapo-10.env
     container_name: tapo-10
     restart: unless-stopped
     ports:
@@ -152,7 +162,7 @@ services:
   tapo-11:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-11.env
+    env_file: exporter-config/.tapo-11.env
     container_name: tapo-11
     restart: unless-stopped
     ports:
@@ -161,7 +171,7 @@ services:
   tapo-12:
     build: ../../smarthome/tapo_p110
     image: tapo_p110:latest
-    env_file: .tapo-12.env
+    env_file: exporter-config/.tapo-12.env
     container_name: tapo-12
     restart: unless-stopped
     ports:

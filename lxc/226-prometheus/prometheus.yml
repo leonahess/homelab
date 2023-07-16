@@ -54,7 +54,7 @@ scrape_configs:
 #      - target_label: __address__
 #        replacement: pve_exporter:9221  # PVE exporter.
 
-  - job_name: 'nodes'
+  - job_name: 'nodes_services'
     scrape_interval: 5s
     static_configs:
       - targets:
@@ -62,14 +62,17 @@ scrape_configs:
         - filer.leona.pink:9100
         - fx8350.leona.pink:9100
         - tinyprox1.leona.pink:9100
-        - tinyprox2.leona.pink:9100
-        - tinyprox3.leona.pink:9100
-        - enviro1.leona.pink:9100
-        - enviro2.leona.pink:9100
-        - enviro3.leona.pink:9100
-        - breakout1.leona.pink:9100
-        - breakout2.leona.pink:9100
-        - breakout3.leona.pink:9100
+
+  - job_name: 'nodes_iot'
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - enviro1.leona.pink:9100
+          - enviro2.leona.pink:9100
+          - enviro3.leona.pink:9100
+          - breakout1.leona.pink:9100
+          - breakout2.leona.pink:9100
+          - breakout3.leona.pink:9100
 
   - job_name: 'tapo_p110'
     scrape_interval: 5s
