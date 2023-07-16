@@ -152,7 +152,7 @@ modules:
       module: [http_2xx]  # Look for a HTTP 200 response.
     static_configs:
       - targets:
-        - https://nextcloud.leona.pink/login
+        - https://nextcloud.leona.pink/status.php
         - http://homeassistant.leona.pink:8123
         - https://unifi.leona.pink/manage/account/login
         - https://grafana.leona.pink/login
