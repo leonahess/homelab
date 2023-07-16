@@ -66,7 +66,7 @@ scrape_configs:
       - targets:
           - http://homeassistant.leona.pink:8123
         labels:
-          service: "Homeassitant"
+          service: "Homeassistant"
       - targets:
           - https://unifi.leona.pink/manage/account/login
         labels:
