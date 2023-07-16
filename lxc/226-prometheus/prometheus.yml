@@ -61,12 +61,36 @@ scrape_configs:
     static_configs:
       - targets:
           - https://nextcloud.leona.pink/login
+        labels:
+          service: "Nextcloud"
+      - targets:
           - http://homeassistant.leona.pink:8123
+        labels:
+          service: "Homeassitant"
+      - targets:
           - https://unifi.leona.pink/manage/account/login
+        labels:
+          service: "Unifi Controller"
+      - targets:
           - https://grafana.leona.pink/login
+        labels:
+          service: "Grafana"
+      - targets:
           - http://prometheus.leona.pink:9090/graph
+        labels:
+          service: "Prometheus"
+      - targets:
           - https://fx8350.leona.pink/login
+        labels:
+          service: "Unraid"
+      - targets:
           - https://tinyprox1.leona.pink:8006
+        labels:
+          service: "Proxmox"
+      - targets:
+          - http://prometheus.leona.pink:9093
+        labels:
+          service: "Alertmanager"
     relabel_configs:
       - source_labels: [ __address__ ]
         target_label: __param_target
