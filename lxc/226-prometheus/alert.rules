@@ -1,6 +1,62 @@
 groups:
 
+########################################################################################################################
+# IOT NODES                                                                                                            #
+########################################################################################################################
+- name: iot_nodes
+  rules:
 
+  - alert: high_memory_usage
+    expr: (((node_memory_MemTotal_bytes{job="nodes_iot"} - node_memory_MemFree_bytes{job="nodes_iot"} - (node_memory_Cached_bytes{job="nodes_iot"} + node_memory_Buffers_bytes{job="nodes_iot"})) / node_memory_MemTotal_bytes{job="nodes_iot"}) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High Memory Usage on IOT Node: {{ label.instance }}"
+
+  - alert: critical_memory_usage
+      expr: (((node_memory_MemTotal_bytes{job="nodes_iot"} - node_memory_MemFree_bytes{job="nodes_iot"} - (node_memory_Cached_bytes{job="nodes_iot"} + node_memory_Buffers_bytes{job="nodes_iot"})) / node_memory_MemTotal_bytes{job="nodes_iot"}) * 100) > 95
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Critical Memory Usage on IOT Node: {{ label.instance }}"
+
+  - alert: high_rootfs_usage
+    expr: (100 - ((node_filesystem_avail_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"})) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High RootFS usage on IOT Node: {{ label.instance }}"
+
+  - alert: critical_rootfs_usage
+      expr: (100 - ((node_filesystem_avail_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"})) > 90
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Critical RootFS usage on IOT Node: {{ label.instance }}"
+
+########################################################################################################################
+# SERVICE NODES                                                                                                        #
+########################################################################################################################
+#- name: service_nodes
+#  rules:
+
+########################################################################################################################
+# SERVICES                                                                                                             #
+########################################################################################################################
+- name: services
+  rules:
+
+  - alert: service_down
+    expr: probe_success == 0
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Service {{ $labels.instance }} down"
 
 ########################################################################################################################
 # TARGETS                                                                                                              #
