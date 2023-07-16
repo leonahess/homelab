@@ -47,7 +47,7 @@ groups:
     for: 6h
     labels:
       severity: warning
-    annotation:
+    annotations:
       summary: "High Humidity in Room: {{ $labels.room }}"
 
   - alert: critical_humidity
@@ -55,7 +55,7 @@ groups:
     for: 6h
     labels:
       severity: critical
-    annotation:
+    annotations:
       summary: "Critical Humidity in Room: {{ $labels.room }}"
 
   - alert: high_particles
@@ -63,7 +63,7 @@ groups:
     for: 5m
     labels:
       severity: warning
-    annotation:
+    annotations:
       summary: "High Particulate Matter in Room: {{ $labels.room }}"
 
   - alert: critical_particles
@@ -71,5 +71,5 @@ groups:
     for: 5m
     labels:
       severity: critical
-    annotation:
+    annotations:
       summary: "Critical Particulate Matter in Room: {{ $labels.room }}"
