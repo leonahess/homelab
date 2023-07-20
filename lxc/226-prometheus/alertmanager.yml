@@ -35,6 +35,17 @@ route:
             - severity=="critical"
           receiver: telegram_smarthome_critical
 
+inhibit_rules:
+  - source_matchers: [severity="critical"]
+    target_matchers: [severity="warning"]
+    # Apply inhibition if the alertname is the same.
+    # CAUTION:
+    #   If all label names listed in `equal` are missing
+    #   from both the source and target alerts,
+    #   the inhibition rule will apply!
+    equal: [alertname, instance]
+
+
 receivers:
   - name: 'telegram_homelab_warning'
     telegram_configs:
