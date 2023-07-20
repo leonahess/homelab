@@ -16,23 +16,23 @@ route:
   routes:
 
     - matchers:
-        - namespace=="homelab"
+        - namespace="homelab"
       receiver: telegram_homelab_warning
       routes:
         - matchers:
-            - severity=="warning"
+            - severity="warning"
         - matchers:
-            - severity=="critical"
+            - severity="critical"
           receiver: telegram_homelab_critical
 
     - matchers:
-        - namespace=="smarthome"
+        - namespace="smarthome"
       receiver: telegram_smarthome_warning
       routes:
         - matchers:
-            - severity=="warning"
+            - severity="warning"
         - matchers:
-            - severity=="critical"
+            - severity="critical"
           receiver: telegram_smarthome_critical
 
 inhibit_rules:
