@@ -44,10 +44,10 @@ services:
     container_name: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - /mnt/appdata/prometheus/fullchain.pem:/etc/nginx/certs/fullchain_prom.pem
-      - /mnt/appdata/prometheus/privkey.pem:/etc/nginx/certs/privkey_prom.pem
-      - /mnt/appdata/alertmanager/fullchain.pem:/etc/nginx/certs/fullchain_alert.pem
-      - /mnt/appdata/alertmanager/privkey.pem:/etc/nginx/certs/privkey_alert.pem
+      - /mnt/appdata/nginx/prometheus/fullchain.pem:/etc/nginx/certs/fullchain_prom.pem
+      - /mnt/appdata/nginx/prometheus/privkey.pem:/etc/nginx/certs/privkey_prom.pem
+      - /mnt/appdata/nginx/alertmanager/fullchain.pem:/etc/nginx/certs/fullchain_alert.pem
+      - /mnt/appdata/nginx/alertmanager/privkey.pem:/etc/nginx/certs/privkey_alert.pem
     ports:
       - "443:443"
       - "80:80"
