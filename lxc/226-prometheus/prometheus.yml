@@ -76,7 +76,7 @@ scrape_configs:
         labels:
           service: "Grafana"
       - targets:
-          - http://prometheus.leona.pink:9090/graph
+          - https://prometheus.leona.pink/graph
         labels:
           service: "Prometheus"
       - targets:
@@ -88,7 +88,7 @@ scrape_configs:
         labels:
           service: "Proxmox"
       - targets:
-          - http://prometheus.leona.pink:9093
+          - https://alertmanager.leona.pink
         labels:
           service: "Alertmanager"
     relabel_configs:
