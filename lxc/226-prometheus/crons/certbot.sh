@@ -25,4 +25,4 @@ chown 472 /mnt/appdata/nginx/alertmanager/fullchain.pem
 chown 472 /mnt/appdata/nginx/alertmanager/privkey.pem
 
 
-docker-compose -f /root/homelab/lxc/222-grafana/docker-compose.yml up -d
+docker-compose -f /root/homelab/lxc/226-prometheus/docker-compose.yml up -d
