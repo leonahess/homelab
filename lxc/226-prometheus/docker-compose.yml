@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   prometheus:
-    image: prom/prometheus:v2.45.0
+    image: prom/prometheus:v2.47.0
     container_name: prometheus
     volumes:
       - /root/homelab/lxc/226-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
 
   alertmanager:
-    image: prom/alertmanager:v0.25.0
+    image: prom/alertmanager:v0.26.0
     container_name: alertmanager
     ports:
       - 9093:9093
