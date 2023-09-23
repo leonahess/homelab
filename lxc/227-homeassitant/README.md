@@ -78,3 +78,47 @@ mkdir -p /mnt/appdata/homeassistant
 ```
 docker-compose -f /root/homelab/lxc/227-homeassistant/docker-compose.yml up -d
 ```
+
+## SSL Certs
+
+### Install certbot and cloudflare plugin
+
+```
+apt install certbot python3-certbot-dns-cloudflare
+```
+
+### Create cloudflare.ini with cloudflare credentials
+
+cloudflare.ini
+```
+dns_cloudflare_email=insert_your_email_here
+dns_cloudflare_api_key=insert_your_global_api_key_here
+```
+
+chmod to 600
+
+```
+chmod 600 /root/.secrets/cloudflare.ini
+```
+
+### get certs
+
+```
+certbot certonly --dns-cloudflare --dns-cloudflare-credentials ~/.secrets/cloudflare.ini -d homeassistant.leona.pink
+```
+
+### copy certs to docker bind mount and chown to grafana user
+
+```
+cp /etc/letsencrypt/live/homeassistant.leona.pink/fullchain.pem /mnt/appdata/nginx/fullchain.pem
+cp /etc/letsencrypt/live/homeassistant.leona.pink/privkey.pem /mnt/appdata/nginx/privkey.pem
+
+chown 472 /mnt/appdata/nginx/fullchain.pem
+chown 472 /mnt/appdata/nginx/privkey.pem
+```
+
+### add cronjob to crontab
+
+```
+0 1 1 * * sh /root/homelab/lxc/227-homeassistant/crons/certbot.sh
+```

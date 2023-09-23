@@ -380,5 +380,5 @@ chown 472 /mnt/appdata/grafana/privkey.pem
 ### add cronjob to crontab
 
 ```
-0 1 1 * * sh /root/homelab/lxc/222-grafana/crons/certbot.sh
+0 1 1 * * sh /root/homelab/lxc/226-prometheus/crons/certbot.sh
 ```
