@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  komga:
+    image: gotson/komga
+    container_name: komga
+    volumes:
+      - type: bind
+        source: /mnt/appdata/komga
+        target: /config
+      - type: bind
+        source: /mnt/bind/media/book/Comic
+        target: /data
+      - type: bind
+        source: /etc/timezone #alternatively you can use a TZ environment variable, like TZ=Europe/London
+        target: /etc/timezone
+        read_only: true
+    ports:
+      - 25600:25600
+    user: "1000:1000"
+    restart: unless-stopped
