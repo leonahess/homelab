@@ -28,9 +28,6 @@ PASSWORD = os.getenv("PASSWORD", "default")
 logging.info("Initializing Plug with IP: %s" % IP)
 p110 = PyP110.P110(IP, USERNAME, PASSWORD)
 
-p110.handshake() #Creates the cookies required for further methods
-p110.login() #Sends credentials to the plug and creates AES Key and IV for further methods
-
 ########################################################################################################################
 #                                                                                                                      #
 # Stuff                                                                                            #
@@ -57,11 +54,11 @@ def process_request():
   response = p110.getEnergyUsage()
   logging.debug(response)
 
-  power.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["result"]["current_power"])
-  energy_today.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["result"]["today_energy"])
-  energy_month.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["result"]["month_energy"])
-  runtime_today.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["result"]["today_runtime"])
-  runtime_month.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["result"]["month_runtime"])
+  power.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["current_power"])
+  energy_today.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["today_energy"])
+  energy_month.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["month_energy"])
+  runtime_today.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["today_runtime"])
+  runtime_month.labels(location=LOCATION, room=ROOM, device=DEVICE, is_light=IS_LIGHT, type=TYPE).set(response["month_runtime"])
 
 if __name__ == '__main__':
     start_http_server(8000)
