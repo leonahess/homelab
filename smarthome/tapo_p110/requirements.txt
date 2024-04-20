@@ -1,2 +1,2 @@
-PyP100
+git+https://github.com/almottier/TapoP100.git@main
 prometheus-client
