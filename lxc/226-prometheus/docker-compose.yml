@@ -73,84 +73,32 @@ services:
     env_file:
       - exporter-config/.unpoller.env
 
-#  thanos_store_gateway:
-#    container_name: thanos_store_gateway
-#    image: thanosio/thanos:v0.23.1
-#    volumes:
-#      - /root/homelab/lxc/226-prometheus/bucket_config.yml:/etc/thanos/bucket_config.yml
-#    command:
-#      - 'store'
-#      - '--grpc-address=0.0.0.0:10091'
-#      - '--http-address=0.0.0.0:10902'
-#      - '--data-dir=/tmp/thanos/store'
-#      - '--objstore.config-file=/etc/thanos/bucket_config.yml'
-#    restart: unless-stopped
+  loki:
+    image: grafana/loki:3.4.2
+    container_name: loki
+    ports:
+      - 3100:3100
+    volumes:
+      - /root/homelab/lxc/226-prometheus/loki-config.yml:/etc/loki/local-config.yaml
+      - /mnt/appdata/loki:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
 
-
-#  thanos_sidecar:
-#    container_name: thanos_sidecar
-#    image: thanosio/thanos:v0.23.1
-#    volumes:
-#      - /root/homelab/lxc/226-prometheus/bucket_config.yml:/etc/thanos/bucket_config.yml
-#      - /mnt/appdata/prometheus/:/prometheus
-#    command:
-#      - 'sidecar'
-#      - '--tsdb.path=/prometheus'
-#      - '--prometheus.url=http://prometheus:9090'
-#      - '--grpc-address=0.0.0.0:10091'
-#      - '--http-address=0.0.0.0:10902'
-#      - '--objstore.config-file=/etc/thanos/bucket_config.yml'
-#    depends_on:
-#        - prometheus
-#    restart: unless-stopped
-
-
-#  thanos_compactor:
-#    container_name: thanos_compactor
-#    image: thanosio/thanos:v0.23.1
-#    volumes:
-#      - /root/homelab/lxc/226-prometheus/bucket_config.yml:/etc/thanos/bucket_config.yml
-#    command:
-#      - 'compact'
-#      - '--log.level=debug'
-#      - '--data-dir=/data'
-#      - '--objstore.config-file=/etc/thanos/bucket_config.yml'
-#      - '--wait'
-#    restart: unless-stopped
-
-#  thanos_query:
-#    container_name: thanos_query
-#    image: thanosio/thanos:v0.23.1
-#    command:
-#      - 'query'
-#      - '--grpc-address=0.0.0.0:10091'
-#      - '--http-address=0.0.0.0:10902'
-#      - '--query.replica-label=replica'
-#      - '--store=thanos_sidecar:10091'
-#      - '--store=thanos_store_gateway:10091'
-#    ports:
-#      - 10902:10902
-#    depends_on:
-#      - thanos_sidecar
-#      - thanos_store_gateway
-#    restart: unless-stopped
-
-#  ipmi_exporter:
-#    build:
-#      context: https://github.com/prometheus-community/ipmi_exporter.git#v1.4.0
-#    volumes:
-#      - ./ipmi_remote.yml:/config.yml:ro    # replace with your own config
-#    ports:
-#      - 9290:9290                           # bind on 0.0.0.0
-#      # - 127.0.0.1:9290:9290               # or bind to specific interface
-#    container_name: ipmi_exporter
-#
-#  promtail:
-#   image: grafana/promtail:2.4.2
-#   container_name: promtail
-#   volumes:
-#     - /var/log:/var/log
-#     - /var/lib/docker/containers:/var/lib/docker/containers
-#     - /root/homelab/lxc/226-prometheus/promtail-config.yml:/etc/promtail/config.yml
-#   command: -config.file=/etc/promtail/config.yml -config.expand-env
-#   restart: unless-stopped
+  alloy:
+    image: grafana/alloy:v1.8.2
+    container_name: alloy
+    ports:
+      - 12345:12345   # Alloy UI
+      - 1514:1514     # Syslog TCP
+      - 1514:1514/udp # Syslog UDP
+    volumes:
+      - /root/homelab/lxc/226-prometheus/alloy-config.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/var/log:ro
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+    depends_on:
+      - loki
+    restart: unless-stopped
