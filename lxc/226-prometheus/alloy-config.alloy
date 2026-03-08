@@ -1,0 +1,61 @@
+// ==========================================
+// Docker container log discovery & collection
+// ==========================================
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_logs" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    target_label  = "container"
+    regex         = "/(.*)"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_image"]
+    target_label  = "image"
+  }
+}
+
+loki.source.docker "containers" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.relabel.docker_logs.output
+  forward_to    = [loki.write.default.receiver]
+  refresh_interval = "5s"
+}
+
+// ==========================================
+// Syslog listener (RFC5424 + RFC3164)
+// ==========================================
+
+loki.source.syslog "syslog" {
+  listener {
+    address               = "0.0.0.0:1514"
+    protocol              = "tcp"
+    label_structured_data = true
+    labels                = { job = "syslog" }
+  }
+
+  listener {
+    address               = "0.0.0.0:1514"
+    protocol              = "udp"
+    label_structured_data = true
+    labels                = { job = "syslog" }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+// ==========================================
+// Loki remote write endpoint
+// ==========================================
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
