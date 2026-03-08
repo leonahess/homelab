@@ -49,21 +49,21 @@ inhibit_rules:
 receivers:
   - name: 'telegram_homelab_warning'
     telegram_configs:
-      - bot_token:
-        chat_id:
+      - bot_token: "6381302038:AAFs0Y5ye_XVQbD7iup1Uyi289E0jXp9dPo"
+        chat_id: -1001952777354
         message: '{{ template "telegram.warning.message" . }}'
   - name: 'telegram_homelab_critical'
     telegram_configs:
-      - bot_token:
-        chat_id:
+      - bot_token: "6381302038:AAFs0Y5ye_XVQbD7iup1Uyi289E0jXp9dPo"
+        chat_id: -1001952777354
         message: '{{ template "telegram.critical.message" . }}'
   - name: 'telegram_smarthome_warning'
     telegram_configs:
-      - bot_token:
-        chat_id:
+      - bot_token: "6381302038:AAFs0Y5ye_XVQbD7iup1Uyi289E0jXp9dPo"
+        chat_id: -1001641868732
         message: '{{ template "telegram.warning.message" . }}'
   - name: 'telegram_smarthome_critical'
     telegram_configs:
-      - bot_token:
-        chat_id:
+      - bot_token: "6381302038:AAFs0Y5ye_XVQbD7iup1Uyi289E0jXp9dPo"
+        chat_id: -1001641868732
         message: '{{ template "telegram.critical.message" . }}'

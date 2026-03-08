@@ -13,7 +13,7 @@ groups:
       severity: warning
       namespace: homelab
     annotations:
-      summary: "High Memory Usage on IOT Node: {{ label.instance }}"
+      summary: "High Memory Usage on IOT Node: {{ $labels.instance }}"
 
   - alert: critical_memory_usage
     expr: (((node_memory_MemTotal_bytes{job="nodes_iot"} - node_memory_MemFree_bytes{job="nodes_iot"} - (node_memory_Cached_bytes{job="nodes_iot"} + node_memory_Buffers_bytes{job="nodes_iot"})) / node_memory_MemTotal_bytes{job="nodes_iot"}) * 100) > 95
@@ -22,7 +22,7 @@ groups:
       severity: critical
       namespace: homelab
     annotations:
-      summary: "Critical Memory Usage on IOT Node: {{ label.instance }}"
+      summary: "Critical Memory Usage on IOT Node: {{ $labels.instance }}"
 
   - alert: high_rootfs_usage
     expr: (100 - ((node_filesystem_avail_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"})) > 80
@@ -31,7 +31,7 @@ groups:
       severity: warning
       namespace: homelab
     annotations:
-      summary: "High RootFS usage on IOT Node: {{ label.instance }}"
+      summary: "High RootFS usage on IOT Node: {{ $labels.instance }}"
 
   - alert: critical_rootfs_usage
     expr: (100 - ((node_filesystem_avail_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="nodes_iot",mountpoint="/",fstype!="rootfs"})) > 90
@@ -40,7 +40,7 @@ groups:
       severity: critical
       namespace: homelab
     annotations:
-      summary: "Critical RootFS usage on IOT Node: {{ label.instance }}"
+      summary: "Critical RootFS usage on IOT Node: {{ $labels.instance }}"
 
 ########################################################################################################################
 # SERVICE NODES                                                                                                        #
@@ -55,7 +55,7 @@ groups:
       severity: warning
       namespace: homelab
     annotations:
-      summary: "High Memory Usage on service Node: {{ label.instance }}"
+      summary: "High Memory Usage on service Node: {{ $labels.instance }}"
 
   - alert: critical_memory_usage
     expr: (((node_memory_MemTotal_bytes{job="nodes_services"} - node_memory_MemFree_bytes{job="nodes_services"} - (node_memory_Cached_bytes{job="nodes_services"} + node_memory_Buffers_bytes{job="nodes_services"})) / node_memory_MemTotal_bytes{job="nodes_services"}) * 100) > 95
@@ -64,7 +64,7 @@ groups:
       severity: critical
       namespace: homelab
     annotations:
-      summary: "Critical Memory Usage on service Node: {{ label.instance }}"
+      summary: "Critical Memory Usage on service Node: {{ $labels.instance }}"
 
   - alert: high_rootfs_usage
     expr: (100 - ((node_filesystem_avail_bytes{job="nodes_services",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="nodes_services",mountpoint="/",fstype!="rootfs"})) > 80
@@ -73,7 +73,7 @@ groups:
       severity: warning
       namespace: homelab
     annotations:
-      summary: "High RootFS usage on service Node: {{ label.instance }}"
+      summary: "High RootFS usage on service Node: {{ $labels.instance }}"
 
   - alert: critical_rootfs_usage
     expr: (100 - ((node_filesystem_avail_bytes{job="nodes_services",mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{job="nodes_services",mountpoint="/",fstype!="rootfs"})) > 90
@@ -82,7 +82,7 @@ groups:
       severity: critical
       namespace: homelab
     annotations:
-      summary: "Critical RootFS usage on service Node: {{ label.instance }}"
+      summary: "Critical RootFS usage on service Node: {{ $labels.instance }}"
 
 
 ########################################################################################################################
@@ -109,7 +109,7 @@ groups:
   # Alert for any instance that is unreachable for >2 minutes.
   - alert: target_down
     expr: up == 0
-    for: 2m
+    for: 24h
     labels:
       severity: info
       namespace: homelab
@@ -143,18 +143,18 @@ groups:
       summary: "Critical CO2 in Room: {{ $labels.room }}"
       description: "Plox lüften"
 
-  - alert: high_humidity
-    expr: smarthome_humidity_percent{room!~"Keller"} > 60
-    for: 6h
-    labels:
-      severity: warning
-      namespace: smarthome
-    annotations:
-      summary: "High Humidity in Room: {{ $labels.room }}"
+#  - alert: high_humidity
+#    expr: smarthome_humidity_percent{room!~"Keller"} > 60
+#    for: 6h
+#    labels:
+#      severity: warning
+#      namespace: smarthome
+#    annotations:
+#      summary: "High Humidity in Room: {{ $labels.room }}"
 
   - alert: critical_humidity
     expr: smarthome_humidity_percent{room!~"Keller"} > 70
-    for: 6h
+    for: 24h
     labels:
       severity: critical
       namespace: smarthome
