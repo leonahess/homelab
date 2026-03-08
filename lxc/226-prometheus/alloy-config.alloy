@@ -1,3 +1,8 @@
+livedebugging {
+  enabled = true
+}
+
+
 // ==========================================
 // Docker container log discovery & collection
 // ==========================================
@@ -11,13 +16,23 @@ discovery.relabel "docker_logs" {
 
   rule {
     source_labels = ["__meta_docker_container_name"]
-    target_label  = "container"
+    target_label  = "service"
     regex         = "/(.*)"
   }
 
   rule {
-    source_labels = ["__meta_docker_container_image"]
-    target_label  = "image"
+    target_label = "hostname"
+    replacement = constants.hostname
+  }
+
+  rule {
+    target_label = "os"
+    replacement = constants.os
+  }
+
+  rule {
+      target_label = "arch"
+      replacement = constants.arch
   }
 }
 
@@ -25,6 +40,7 @@ loki.source.docker "containers" {
   host          = "unix:///var/run/docker.sock"
   targets       = discovery.relabel.docker_logs.output
   forward_to    = [loki.write.default.receiver]
+  labels        = { component = "loki.source.docker" }
   refresh_interval = "5s"
 }
 
@@ -32,21 +48,56 @@ loki.source.docker "containers" {
 // Syslog listener (RFC5424 + RFC3164)
 // ==========================================
 
+discovery.relabel "syslog_rules" {
+  targets = []
+
+  rule {
+    source_labels = ["__syslog_message_hostname"]
+    target_label  = "hostname"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_app_name"]
+    target_label  = "app_name"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_facility"]
+    target_label  = "facility"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_severity"]
+    target_label  = "severity"
+  }
+
+  rule {
+    source_labels = ["__syslog_connection_ip_address"]
+    target_label  = "sender_ip"
+  }
+
+  rule {
+    source_labels = ["__syslog_connection_hostname"]
+    target_label  = "sender_hostname"
+  }
+}
+
 loki.source.syslog "syslog" {
   listener {
     address               = "0.0.0.0:1514"
     protocol              = "tcp"
     label_structured_data = true
-    labels                = { job = "syslog" }
+    labels                = { component = "loki.source.syslog", protocol = "tcp" }
   }
 
   listener {
     address               = "0.0.0.0:1514"
     protocol              = "udp"
     label_structured_data = true
-    labels                = { job = "syslog" }
+    labels                = { component = "loki.source.syslog", protocol = "udp" }
   }
 
+  relabel_rules = discovery.relabel.syslog_rules.rules
   forward_to = [loki.write.default.receiver]
 }
 
